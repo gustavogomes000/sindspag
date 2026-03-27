@@ -38,12 +38,9 @@ const Login = () => {
       <div className="w-full max-w-md relative z-10">
         {/* Logo area */}
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-white rounded-2xl p-5 shadow-2xl mb-5">
-            <img src={logo} alt="SINDSPAG" className="h-24 w-auto object-contain" />
+          <div className="bg-white rounded-2xl px-8 py-5 shadow-2xl mb-5">
+            <span className="text-4xl font-extrabold text-primary tracking-tight">SINDSPAG</span>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">
-            SINDSPAG
-          </h1>
           <p className="text-white/70 text-sm mt-1">
             Sistema de Gestão de Associados
           </p>
