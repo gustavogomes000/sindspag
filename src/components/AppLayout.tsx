@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, LogOut, PlusCircle, Settings } from "lucide-react";
-import logo from "@/assets/sindspag-logo.png";
+
 
 const AppLayout = () => {
   const { user, logout, isLoading } = useAuth();
