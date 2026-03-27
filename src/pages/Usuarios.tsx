@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Shield } from "lucide-react";
 
 const Usuarios = () => {
   const { user } = useAuth();
@@ -47,26 +47,32 @@ const Usuarios = () => {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Gerenciar Usuários</h1>
+      <div>
+        <h1 className="text-2xl font-extrabold text-foreground">Usuários</h1>
+        <p className="text-sm text-muted-foreground mt-1">Gerencie os usuários do sistema</p>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5" /> Criar Novo Usuário
+      <Card className="shadow-card border-0 overflow-hidden">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2.5 text-base">
+            <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center">
+              <UserPlus className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-bold">Criar Novo Usuário</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 space-y-1">
-              <Label>Nome</Label>
-              <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do usuário" required />
+            <div className="flex-1 space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nome</Label>
+              <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do usuário" required className="h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
             </div>
-            <div className="flex-1 space-y-1">
-              <Label>Senha</Label>
-              <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Senha" required />
+            <div className="flex-1 space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Senha</Label>
+              <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Senha" required className="h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
             </div>
             <div className="flex items-end">
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="rounded-xl h-11 px-6 gradient-primary border-0 shadow-elevated font-bold">
                 {loading ? "Criando..." : "Criar"}
               </Button>
             </div>
@@ -74,23 +80,36 @@ const Usuarios = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Usuários Cadastrados</CardTitle>
+      <Card className="shadow-card border-0 overflow-hidden">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2.5 text-base">
+            <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <Shield className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-bold">Usuários Cadastrados</span>
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Cargo</TableHead>
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableHead className="font-bold text-foreground">Nome</TableHead>
+                <TableHead className="font-bold text-foreground">Cargo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {usuarios?.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell>{u.nome}</TableCell>
-                  <TableCell className="capitalize">{u.cargo}</TableCell>
+                <TableRow key={u.id} className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-semibold">{u.nome}</TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                      u.cargo === "admin"
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}>
+                      {u.cargo}
+                    </span>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
