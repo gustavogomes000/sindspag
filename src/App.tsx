@@ -21,9 +21,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Login />} />
             <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/cadastro" element={<AssociadoForm />} />
+              <Route path="/associados" element={<Dashboard />} />
               <Route path="/associado/:id" element={<AssociadoForm />} />
               <Route path="/usuarios" element={<Usuarios />} />
+              <Route path="/dashboard" element={<Navigate to="/associados" replace />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
