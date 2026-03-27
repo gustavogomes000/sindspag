@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, LogOut, PlusCircle, Settings } from "lucide-react";
-import logo from "@/assets/sindspag-logo.png";
+
 
 const AppLayout = () => {
   const { user, logout, isLoading } = useAuth();
@@ -22,14 +22,9 @@ const AppLayout = () => {
       {/* Top header with gradient */}
       <header className="gradient-primary shadow-elevated">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-1.5">
-              <img src={logo} alt="SINDSPAG" className="h-8 object-contain" />
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-bold text-white text-lg tracking-wide">SINDSPAG</span>
-              <p className="text-white/60 text-[10px] leading-tight font-medium">Sistema de Gestão</p>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-white text-xl tracking-tight">SINDSPAG</span>
+            <span className="text-white/50 text-[10px] leading-tight font-medium hidden sm:block">Sistema de Gestão</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-white/70 text-sm hidden sm:block">
