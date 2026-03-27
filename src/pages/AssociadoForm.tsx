@@ -55,7 +55,7 @@ const defaultForm: FormData = {
 
 const AssociadoForm = () => {
   const { id } = useParams();
-  const isNew = id === "novo";
+  const isNew = !id;
   const navigate = useNavigate();
   const { user } = useAuth();
   const [form, setForm] = useState<FormData>(defaultForm);
@@ -125,18 +125,20 @@ const AssociadoForm = () => {
       toast.error("Erro ao salvar: " + error.message);
     } else {
       toast.success(isNew ? "Associado cadastrado!" : "Associado atualizado!");
-      navigate("/dashboard");
+      navigate("/associados");
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Button variant="ghost" onClick={() => navigate("/dashboard")} className="gap-2">
-        <ArrowLeft className="h-4 w-4" /> Voltar
-      </Button>
+      {id && (
+        <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2">
+          <ArrowLeft className="h-4 w-4" /> Voltar
+        </Button>
+      )}
 
       <h1 className="text-2xl font-bold text-foreground">
-        {isNew ? "Novo Associado" : "Editar Associado"}
+        {isNew ? "Cadastrar Associado" : "Editar Associado"}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -362,7 +364,7 @@ const AssociadoForm = () => {
         </Card>
 
         <div className="flex gap-3 justify-end">
-          <Button type="button" variant="outline" onClick={() => navigate("/dashboard")}>
+          <Button type="button" variant="outline" onClick={() => navigate("/associados")}>
             Cancelar
           </Button>
           <Button type="submit" disabled={loading}>
