@@ -364,7 +364,7 @@ const AssociadoForm = () => {
         </Card>
 
         <div className="flex gap-3 justify-end">
-          <Button type="button" variant="outline" onClick={() => navigate("/dashboard")}>
+          <Button type="button" variant="outline" onClick={() => navigate("/associados")}>
             Cancelar
           </Button>
           <Button type="submit" disabled={loading}>
