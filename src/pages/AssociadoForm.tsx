@@ -138,7 +138,7 @@ const AssociadoForm = () => {
       )}
 
       <h1 className="text-2xl font-bold text-foreground">
-        {isNew ? "Novo Associado" : "Editar Associado"}
+        {isNew ? "Cadastrar Associado" : "Editar Associado"}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
