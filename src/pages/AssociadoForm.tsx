@@ -55,7 +55,7 @@ const defaultForm: FormData = {
 
 const AssociadoForm = () => {
   const { id } = useParams();
-  const isNew = id === "novo";
+  const isNew = !id;
   const navigate = useNavigate();
   const { user } = useAuth();
   const [form, setForm] = useState<FormData>(defaultForm);

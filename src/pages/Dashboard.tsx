@@ -44,10 +44,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-foreground">Associados</h1>
-        <Button onClick={() => navigate("/associado/novo")} className="gap-2">
-          <Plus className="h-4 w-4" /> Novo Associado
-        </Button>
+        <h1 className="text-2xl font-bold text-foreground">Associados Cadastrados</h1>
       </div>
 
       <div className="relative max-w-md">
