@@ -22,9 +22,8 @@ const AppLayout = () => {
       {/* Top header with gradient */}
       <header className="gradient-primary shadow-elevated">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <span className="font-extrabold text-white text-xl tracking-tight">SINDSPAG</span>
-            <span className="text-white/50 text-[10px] leading-tight font-medium hidden sm:block">Sistema de Gestão</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-white/70 text-sm hidden sm:block">
