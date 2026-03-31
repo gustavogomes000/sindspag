@@ -201,8 +201,14 @@ const Dashboard = () => {
   const clearFilters = () => { setDateFrom(""); setDateTo(""); setStatusFilter("todos"); setSocioFilter("todos"); setSearch(""); };
   const hasActiveFilters = dateFrom || dateTo || statusFilter !== "todos" || socioFilter !== "todos";
 
+  if (queryError) return (
+    <div className="flex items-center justify-center py-16">
+      <p className="text-sm text-destructive">Erro ao carregar dados. Tente novamente.</p>
+    </div>
+  );
+
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
