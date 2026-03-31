@@ -151,18 +151,17 @@ const Dashboard = () => {
     const headers = [
       "Nome", "CPF", "Telefone", "WhatsApp", "Email", "Instagram", "Facebook",
       "Título Eleitor", "Zona Eleitoral", "Seção Eleitoral", "Município", "UF",
-      "Colégio Eleitoral", "Situação Título", "Ligação Política", "Posição",
-      "Região Atuação", "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
-      "Apoiadores", "Meta Votos", "Comprometimento", "Status", "Observações", "Cadastrado Em"
+      "Colégio Eleitoral", "Situação Título", "Ligação Política",
+      "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
+      "Status", "Observações", "Cadastrado Em"
     ];
     const rows = filtered.map(a => [
       a.nome, a.cpf || "", a.telefone || "", a.whatsapp || "", a.email || "",
       a.instagram || "", a.facebook || "", a.titulo_eleitor || "", a.zona_eleitoral || "",
       a.secao_eleitoral || "", a.municipio || "", a.uf || "", a.colegio_eleitoral || "",
-      a.situacao_titulo || "", a.ligacao_politica || "", a.posicao_ligacao || "",
-      a.regiao_atuacao || "", a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
+      a.situacao_titulo || "", a.ligacao_politica || "",
+      a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
       a.ja_foi_socio ? "Sim" : "Não", a.foi_socio_quando || "",
-      a.apoiadores || 0, a.meta_votos || 0, a.comprometimento || "",
       a.status || "", a.observacoes || "", formatDate(a.criado_em)
     ]);
 
