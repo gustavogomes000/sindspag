@@ -231,7 +231,7 @@ const Usuarios = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => { setResetUser(u); setNovaSenha(""); }}
-                        className="rounded-xl hover:bg-amber-500/10 hover:text-amber-600 h-8 w-8"
+                        className="rounded-xl hover:bg-accent/10 hover:text-accent h-8 w-8"
                         title="Resetar senha"
                       >
                         <KeyRound className="h-3.5 w-3.5" />
