@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus, Download, CalendarDays, ChevronDown, ChevronUp, X, Phone, Mail, MapPin, Award, FileSpreadsheet } from "lucide-react";
+import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus, CalendarDays, ChevronDown, ChevronUp, X, MapPin, FileSpreadsheet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
