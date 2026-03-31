@@ -91,14 +91,16 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data: associados, isLoading, refetch } = useQuery({
+  const { data: associados = [], isLoading, error: queryError, refetch } = useQuery({
     queryKey: ["sindspag_associados"],
     queryFn: async () => {
       const { data, error } = await supabase.from("sindspag_associados").select("*").order("nome");
       if (error) throw error;
-      return data as Associado[];
+      return (data ?? []) as Associado[];
     },
   });
+
+  const safeAssociados = Array.isArray(associados) ? associados : [];
 
   const handleDelete = async (id: string) => {
     if (!confirm("Deseja realmente excluir?")) return;
