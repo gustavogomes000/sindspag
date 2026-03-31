@@ -188,7 +188,7 @@ const Usuarios = () => {
       <Card className="shadow-card border-0 overflow-hidden">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2.5 text-base">
-            <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Shield className="h-4 w-4 text-white" />
             </div>
             <span className="font-bold">Usuários Cadastrados</span>
