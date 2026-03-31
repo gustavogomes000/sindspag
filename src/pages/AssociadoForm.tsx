@@ -64,10 +64,8 @@ const AssociadoForm = () => {
             zona_eleitoral: data.zona_eleitoral || "", secao_eleitoral: data.secao_eleitoral || "",
             municipio: data.municipio || "", uf: data.uf || "GO",
             colegio_eleitoral: data.colegio_eleitoral || "", situacao_titulo: data.situacao_titulo || "",
-            ligacao_politica: data.ligacao_politica || "", posicao_ligacao: data.posicao_ligacao || "",
-            regiao_atuacao: data.regiao_atuacao || "", apoiadores: data.apoiadores || 0,
-            meta_votos: data.meta_votos || 0, status: data.status || "Ativo",
-            comprometimento: data.comprometimento || "", observacoes: data.observacoes || "",
+            ligacao_politica: data.ligacao_politica || "", status: data.status || "Ativo",
+            observacoes: data.observacoes || "",
             eh_socio_atual: data.eh_socio_atual || false, socio_desde: data.socio_desde || "",
             ja_foi_socio: data.ja_foi_socio || false, foi_socio_quando: data.foi_socio_quando || "",
           });
