@@ -434,7 +434,7 @@ const Dashboard = () => {
                 <div className="flex gap-2 mt-3">
                   <Badge variant={viewItem.status === "Ativo" ? "success" : viewItem.status === "Inativo" ? "danger" : "default"}>{viewItem.status || "—"}</Badge>
                   <Badge variant={viewItem.eh_socio_atual ? "primary" : "default"}>{viewItem.eh_socio_atual ? "Sócio Ativo" : "Não Sócio"}</Badge>
-                  {viewItem.comprometimento && <Badge>{viewItem.comprometimento}</Badge>}
+                  {viewItem.ligacao_politica && <Badge>{viewItem.ligacao_politica}</Badge>}
                 </div>
               </div>
 
