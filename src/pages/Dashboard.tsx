@@ -337,7 +337,7 @@ const Dashboard = () => {
                       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                         <Badge variant={a.status === "Ativo" ? "success" : a.status === "Inativo" ? "danger" : "default"}>{a.status || "—"}</Badge>
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</Badge>
-                        {a.comprometimento && <Badge>{a.comprometimento}</Badge>}
+                        {a.ligacao_politica && <Badge>{a.ligacao_politica}</Badge>}
                       </div>
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
