@@ -110,10 +110,9 @@ const Dashboard = () => {
   };
 
   const filtered = useMemo(() => {
-    if (!associados) return [];
-    return associados.filter((a) => {
+    return safeAssociados.filter((a) => {
       const s = search.toLowerCase();
-      const matchSearch = !search || a.nome.toLowerCase().includes(s) || a.telefone?.toLowerCase().includes(s) || a.cpf?.toLowerCase().includes(s) || a.email?.toLowerCase().includes(s) || a.municipio?.toLowerCase().includes(s);
+      const matchSearch = !search || a.nome?.toLowerCase().includes(s) || a.telefone?.toLowerCase().includes(s) || a.cpf?.toLowerCase().includes(s) || a.email?.toLowerCase().includes(s) || a.municipio?.toLowerCase().includes(s);
       const matchStatus = statusFilter === "todos" || a.status === statusFilter;
       const matchSocio = socioFilter === "todos" || (socioFilter === "sim" && a.eh_socio_atual) || (socioFilter === "nao" && !a.eh_socio_atual);
       const created = new Date(a.criado_em);
@@ -121,10 +120,10 @@ const Dashboard = () => {
       const matchDateTo = !dateTo || created <= new Date(dateTo + "T23:59:59");
       return matchSearch && matchStatus && matchSocio && matchDateFrom && matchDateTo;
     });
-  }, [associados, search, statusFilter, socioFilter, dateFrom, dateTo]);
+  }, [safeAssociados, search, statusFilter, socioFilter, dateFrom, dateTo]);
 
-  const totalAssociados = associados?.length || 0;
-  const totalSocios = associados?.filter(a => a.eh_socio_atual).length || 0;
+  const totalAssociados = safeAssociados.length;
+  const totalSocios = safeAssociados.filter(a => a.eh_socio_atual).length;
   const totalNaoSocios = totalAssociados - totalSocios;
 
   const exportXLSX = () => {
