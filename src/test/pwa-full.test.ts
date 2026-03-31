@@ -360,6 +360,14 @@ describe("AssociadoForm Page", () => {
     expect(form).toContain("telefone");
     expect(form).toContain("titulo_eleitor");
     expect(form).toContain("zona_eleitoral");
+    expect(form).toContain("ligacao_politica");
+  });
+
+  it("has ligacao_politica in electoral section (not separate)", () => {
+    expect(form).toContain("ligacao_politica");
+    expect(form).not.toContain("PERFIL E STATUS");
+    expect(form).not.toContain("comprometimento");
+    expect(form).not.toContain("posicao_ligacao");
   });
 
   it("has success toast on save", () => {
