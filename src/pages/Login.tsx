@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Lock, User } from "lucide-react";
+
+const STORAGE_KEY = "sindspag_remember";
 
 const Login = () => {
   const { login, user, isLoading } = useAuth();
   const navigate = useNavigate();
   const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
+  const [lembrar, setLembrar] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // If already logged in, redirect
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const { nome: n, senha: s } = JSON.parse(saved);
+        if (n) setNome(n);
+        if (s) setSenha(s);
+        setLembrar(true);
+      } catch {}
+    }
+  }, []);
+
   if (!isLoading && user) return <Navigate to="/associados" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,6 +38,11 @@ const Login = () => {
     if (!nome.trim() || !senha.trim()) {
       setError("Preencha usuário e senha");
       return;
+    }
+    if (lembrar) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nome: nome.trim(), senha }));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
     }
     setLoading(true);
     try {
@@ -84,6 +104,17 @@ const Login = () => {
                   className="pl-10 h-12 rounded-xl border-border/60 focus:border-primary focus:ring-primary/20"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="lembrar"
+                checked={lembrar}
+                onCheckedChange={(checked) => setLembrar(checked === true)}
+              />
+              <Label htmlFor="lembrar" className="text-sm text-muted-foreground cursor-pointer select-none">
+                Lembrar usuário e senha
+              </Label>
             </div>
 
             {error && (
