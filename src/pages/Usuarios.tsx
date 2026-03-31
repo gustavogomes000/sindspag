@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -22,11 +21,9 @@ const Usuarios = () => {
   const [cargo, setCargo] = useState("usuario");
   const [loading, setLoading] = useState(false);
 
-  // Edit dialog
   const [editUser, setEditUser] = useState<{ id: string; nome: string; cargo: string } | null>(null);
   const [editCargo, setEditCargo] = useState("");
 
-  // Reset password dialog
   const [resetUser, setResetUser] = useState<{ id: string; nome: string } | null>(null);
   const [novaSenha, setNovaSenha] = useState("");
 
@@ -46,14 +43,24 @@ const Usuarios = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim() || !senha.trim()) {
+    const trimmedNome = nome.trim();
+    const trimmedSenha = senha.trim();
+    if (!trimmedNome || !trimmedSenha) {
       toast.error("Preencha nome e senha");
+      return;
+    }
+    if (trimmedNome.length < 3) {
+      toast.error("Nome deve ter pelo menos 3 caracteres");
+      return;
+    }
+    if (trimmedSenha.length < 4) {
+      toast.error("Senha deve ter pelo menos 4 caracteres");
       return;
     }
     setLoading(true);
     const { data, error } = await supabase.rpc("sindspag_criar_usuario", {
-      p_nome: nome.trim(),
-      p_senha: senha,
+      p_nome: trimmedNome,
+      p_senha: trimmedSenha,
       p_cargo: cargo,
     });
     setLoading(false);
@@ -102,13 +109,19 @@ const Usuarios = () => {
   };
 
   const handleResetSenha = async () => {
-    if (!resetUser || !novaSenha.trim()) {
+    if (!resetUser) return;
+    const trimmed = novaSenha.trim();
+    if (!trimmed) {
       toast.error("Digite a nova senha");
+      return;
+    }
+    if (trimmed.length < 4) {
+      toast.error("Senha deve ter pelo menos 4 caracteres");
       return;
     }
     const { data, error } = await (supabase.rpc as any)("sindspag_resetar_senha", {
       p_user_id: resetUser.id,
-      p_nova_senha: novaSenha,
+      p_nova_senha: trimmed,
     });
     const result = data as any;
     if (error || !result?.success) {
@@ -121,18 +134,18 @@ const Usuarios = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-foreground">Usuários</h1>
-        <p className="text-sm text-muted-foreground mt-1">Gerencie os usuários do sistema</p>
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">Usuários</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Gerencie os usuários do sistema</p>
       </div>
 
       {/* Create user */}
       <Card className="shadow-card border-0 overflow-hidden">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2.5 text-base">
-            <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center">
-              <UserPlus className="h-4 w-4 text-white" />
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg gradient-primary flex items-center justify-center">
+              <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
             </div>
             <span className="font-bold">Criar Novo Usuário</span>
           </CardTitle>
@@ -147,7 +160,7 @@ const Usuarios = () => {
                   onChange={(e) => setNome(e.target.value)}
                   placeholder="Nome do usuário"
                   required
-                  className="h-11 rounded-xl border-0 bg-muted/50 focus:bg-background"
+                  className="h-10 sm:h-11 rounded-xl border-0 bg-muted/50 focus:bg-background"
                 />
               </div>
               <div className="space-y-1.5">
@@ -156,15 +169,15 @@ const Usuarios = () => {
                   type="password"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  placeholder="Senha"
+                  placeholder="Senha (mín. 4 chars)"
                   required
-                  className="h-11 rounded-xl border-0 bg-muted/50 focus:bg-background"
+                  className="h-10 sm:h-11 rounded-xl border-0 bg-muted/50 focus:bg-background"
                 />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Cargo</Label>
                 <Select value={cargo} onValueChange={setCargo}>
-                  <SelectTrigger className="h-11 rounded-xl border-0 bg-muted/50">
+                  <SelectTrigger className="h-10 sm:h-11 rounded-xl border-0 bg-muted/50">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -176,7 +189,7 @@ const Usuarios = () => {
               </div>
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={loading} className="rounded-xl h-11 px-6 gradient-primary border-0 shadow-elevated font-bold">
+              <Button type="submit" disabled={loading} className="rounded-xl h-10 sm:h-11 px-5 sm:px-6 gradient-primary border-0 shadow-elevated font-bold text-sm">
                 {loading ? "Criando..." : "Criar Usuário"}
               </Button>
             </div>
@@ -186,87 +199,103 @@ const Usuarios = () => {
 
       {/* User list */}
       <Card className="shadow-card border-0 overflow-hidden">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2.5 text-base">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Shield className="h-4 w-4 text-white" />
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="flex items-center gap-2.5 text-sm sm:text-base">
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-primary flex items-center justify-center">
+              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
             </div>
             <span className="font-bold">Usuários Cadastrados</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="font-bold text-foreground">Nome</TableHead>
-                <TableHead className="font-bold text-foreground">Cargo</TableHead>
-                <TableHead className="w-32 font-bold text-foreground">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {usuarios?.map((u) => (
-                <TableRow key={u.id} className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="font-semibold">{u.nome}</TableCell>
-                  <TableCell>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                      u.cargo === "admin"
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      {u.cargo}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => { setEditUser(u); setEditCargo(u.cargo); }}
-                        className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8"
-                        title="Editar cargo"
-                      >
-                        <Edit className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => { setResetUser(u); setNovaSenha(""); }}
-                        className="rounded-xl hover:bg-accent/10 hover:text-accent h-8 w-8"
-                        title="Resetar senha"
-                      >
-                        <KeyRound className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(u.id, u.nome)}
-                        disabled={u.id === user?.id}
-                        className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8"
-                        title="Excluir usuário"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {(!usuarios || usuarios.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                    Nenhum usuário cadastrado
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          {/* Mobile cards */}
+          <div className="block sm:hidden divide-y">
+            {usuarios?.map((u) => (
+              <div key={u.id} className="p-3 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-foreground truncate">{u.nome}</p>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold mt-1 ${
+                    u.cargo === "admin"
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  }`}>
+                    {u.cargo}
+                  </span>
+                </div>
+                <div className="flex gap-0.5 shrink-0">
+                  <Button variant="ghost" size="icon" onClick={() => { setEditUser(u); setEditCargo(u.cargo); }} className="rounded-xl h-8 w-8" title="Editar cargo">
+                    <Edit className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => { setResetUser(u); setNovaSenha(""); }} className="rounded-xl h-8 w-8" title="Resetar senha">
+                    <KeyRound className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(u.id, u.nome)} disabled={u.id === user?.id} className="rounded-xl h-8 w-8 hover:text-destructive" title="Excluir">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {(!usuarios || usuarios.length === 0) && (
+              <div className="text-center text-muted-foreground py-8 text-sm">
+                Nenhum usuário cadastrado
+              </div>
+            )}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden sm:block">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-muted/50 border-b">
+                  <th className="text-left font-bold text-foreground text-sm py-3 px-4">Nome</th>
+                  <th className="text-left font-bold text-foreground text-sm py-3 px-4">Cargo</th>
+                  <th className="text-left font-bold text-foreground text-sm py-3 px-4 w-32">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios?.map((u) => (
+                  <tr key={u.id} className="border-b hover:bg-muted/30 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-sm">{u.nome}</td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                        u.cargo === "admin" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {u.cargo}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => { setEditUser(u); setEditCargo(u.cargo); }} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8" title="Editar cargo">
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => { setResetUser(u); setNovaSenha(""); }} className="rounded-xl h-8 w-8" title="Resetar senha">
+                          <KeyRound className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(u.id, u.nome)} disabled={u.id === user?.id} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8" title="Excluir">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {(!usuarios || usuarios.length === 0) && (
+                  <tr>
+                    <td colSpan={3} className="text-center text-muted-foreground py-8">
+                      Nenhum usuário cadastrado
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 
       {/* Edit cargo dialog */}
       <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="rounded-2xl max-w-[90vw] sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Editar Cargo — {editUser?.nome}</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">Editar Cargo — {editUser?.nome}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Cargo</Label>
@@ -281,7 +310,7 @@ const Usuarios = () => {
               </SelectContent>
             </Select>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setEditUser(null)} className="rounded-xl">Cancelar</Button>
             <Button onClick={handleEditCargo} className="rounded-xl gradient-primary border-0 font-bold">Salvar</Button>
           </DialogFooter>
@@ -290,9 +319,9 @@ const Usuarios = () => {
 
       {/* Reset password dialog */}
       <Dialog open={!!resetUser} onOpenChange={(open) => !open && setResetUser(null)}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="rounded-2xl max-w-[90vw] sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Resetar Senha — {resetUser?.nome}</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">Resetar Senha — {resetUser?.nome}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nova Senha</Label>
@@ -300,11 +329,11 @@ const Usuarios = () => {
               type="password"
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
-              placeholder="Digite a nova senha"
+              placeholder="Mínimo 4 caracteres"
               className="h-11 rounded-xl border-0 bg-muted/50 focus:bg-background"
             />
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setResetUser(null)} className="rounded-xl">Cancelar</Button>
             <Button onClick={handleResetSenha} className="rounded-xl gradient-primary border-0 font-bold">Resetar Senha</Button>
           </DialogFooter>
