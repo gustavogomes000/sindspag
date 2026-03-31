@@ -256,55 +256,20 @@ const AssociadoForm = () => {
               </SelectContent>
             </Select>
           </div>
-        </SectionCard>
-
-        {/* PERFIL E STATUS */}
-        <SectionCard icon={Star} title="PERFIL E STATUS" color="bg-amber-600">
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ligação política</Label>
             <Input value={form.ligacao_politica} onChange={(e) => set("ligacao_politica", e.target.value)} placeholder="A quem é ligado politicamente" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Posição da ligação</Label>
-            <Input value={form.posicao_ligacao} onChange={(e) => set("posicao_ligacao", e.target.value)} placeholder="Cargo político ou função" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Região de atuação</Label>
-            <Input value={form.regiao_atuacao} onChange={(e) => set("regiao_atuacao", e.target.value)} placeholder="Bairro X, Comunidade Y..." className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Apoiadores</Label>
-              <Input type="number" value={form.apoiadores} onChange={(e) => set("apoiadores", Number(e.target.value))} className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Meta votos</Label>
-              <Input type="number" value={form.meta_votos} onChange={(e) => set("meta_votos", Number(e.target.value))} className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status *</Label>
-              <Select value={form.status} onValueChange={(v) => set("status", v)}>
-                <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comprometimento</Label>
-              <Select value={form.comprometimento || ""} onValueChange={(v) => set("comprometimento", v)}>
-                <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue placeholder="Selecione..." /></SelectTrigger>
-                <SelectContent>
-                  {COMPROMETIMENTO_OPTIONS.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status *</Label>
+            <Select value={form.status} onValueChange={(v) => set("status", v)}>
+              <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Observações</Label>
