@@ -91,14 +91,16 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data: associados, isLoading, refetch } = useQuery({
+  const { data: associados = [], isLoading, error: queryError, refetch } = useQuery({
     queryKey: ["sindspag_associados"],
     queryFn: async () => {
       const { data, error } = await supabase.from("sindspag_associados").select("*").order("nome");
       if (error) throw error;
-      return data as Associado[];
+      return (data ?? []) as Associado[];
     },
   });
+
+  const safeAssociados = Array.isArray(associados) ? associados : [];
 
   const handleDelete = async (id: string) => {
     if (!confirm("Deseja realmente excluir?")) return;
@@ -108,10 +110,9 @@ const Dashboard = () => {
   };
 
   const filtered = useMemo(() => {
-    if (!associados) return [];
-    return associados.filter((a) => {
+    return safeAssociados.filter((a) => {
       const s = search.toLowerCase();
-      const matchSearch = !search || a.nome.toLowerCase().includes(s) || a.telefone?.toLowerCase().includes(s) || a.cpf?.toLowerCase().includes(s) || a.email?.toLowerCase().includes(s) || a.municipio?.toLowerCase().includes(s);
+      const matchSearch = !search || a.nome?.toLowerCase().includes(s) || a.telefone?.toLowerCase().includes(s) || a.cpf?.toLowerCase().includes(s) || a.email?.toLowerCase().includes(s) || a.municipio?.toLowerCase().includes(s);
       const matchStatus = statusFilter === "todos" || a.status === statusFilter;
       const matchSocio = socioFilter === "todos" || (socioFilter === "sim" && a.eh_socio_atual) || (socioFilter === "nao" && !a.eh_socio_atual);
       const created = new Date(a.criado_em);
@@ -119,10 +120,10 @@ const Dashboard = () => {
       const matchDateTo = !dateTo || created <= new Date(dateTo + "T23:59:59");
       return matchSearch && matchStatus && matchSocio && matchDateFrom && matchDateTo;
     });
-  }, [associados, search, statusFilter, socioFilter, dateFrom, dateTo]);
+  }, [safeAssociados, search, statusFilter, socioFilter, dateFrom, dateTo]);
 
-  const totalAssociados = associados?.length || 0;
-  const totalSocios = associados?.filter(a => a.eh_socio_atual).length || 0;
+  const totalAssociados = safeAssociados.length;
+  const totalSocios = safeAssociados.filter(a => a.eh_socio_atual).length;
   const totalNaoSocios = totalAssociados - totalSocios;
 
   const exportXLSX = () => {
@@ -200,8 +201,14 @@ const Dashboard = () => {
   const clearFilters = () => { setDateFrom(""); setDateTo(""); setStatusFilter("todos"); setSocioFilter("todos"); setSearch(""); };
   const hasActiveFilters = dateFrom || dateTo || statusFilter !== "todos" || socioFilter !== "todos";
 
+  if (queryError) return (
+    <div className="flex items-center justify-center py-16">
+      <p className="text-sm text-destructive">Erro ao carregar dados. Tente novamente.</p>
+    </div>
+  );
+
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
