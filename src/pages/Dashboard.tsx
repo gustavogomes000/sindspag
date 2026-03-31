@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus, Download, CalendarDays, ChevronDown, ChevronUp, X, Phone, Mail, MapPin, Award, FileSpreadsheet } from "lucide-react";
+import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus, CalendarDays, ChevronDown, ChevronUp, X, MapPin, FileSpreadsheet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -31,15 +31,10 @@ type Associado = {
   colegio_eleitoral: string | null;
   situacao_titulo: string | null;
   ligacao_politica: string | null;
-  posicao_ligacao: string | null;
-  regiao_atuacao: string | null;
   eh_socio_atual: boolean | null;
   socio_desde: string | null;
   ja_foi_socio: boolean | null;
   foi_socio_quando: string | null;
-  apoiadores: number | null;
-  meta_votos: number | null;
-  comprometimento: string | null;
   status: string | null;
   observacoes: string | null;
   criado_em: string;
@@ -156,18 +151,17 @@ const Dashboard = () => {
     const headers = [
       "Nome", "CPF", "Telefone", "WhatsApp", "Email", "Instagram", "Facebook",
       "Título Eleitor", "Zona Eleitoral", "Seção Eleitoral", "Município", "UF",
-      "Colégio Eleitoral", "Situação Título", "Ligação Política", "Posição",
-      "Região Atuação", "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
-      "Apoiadores", "Meta Votos", "Comprometimento", "Status", "Observações", "Cadastrado Em"
+      "Colégio Eleitoral", "Situação Título", "Ligação Política",
+      "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
+      "Status", "Observações", "Cadastrado Em"
     ];
     const rows = filtered.map(a => [
       a.nome, a.cpf || "", a.telefone || "", a.whatsapp || "", a.email || "",
       a.instagram || "", a.facebook || "", a.titulo_eleitor || "", a.zona_eleitoral || "",
       a.secao_eleitoral || "", a.municipio || "", a.uf || "", a.colegio_eleitoral || "",
-      a.situacao_titulo || "", a.ligacao_politica || "", a.posicao_ligacao || "",
-      a.regiao_atuacao || "", a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
+      a.situacao_titulo || "", a.ligacao_politica || "",
+      a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
       a.ja_foi_socio ? "Sim" : "Não", a.foi_socio_quando || "",
-      a.apoiadores || 0, a.meta_votos || 0, a.comprometimento || "",
       a.status || "", a.observacoes || "", formatDate(a.criado_em)
     ]);
 
@@ -343,7 +337,7 @@ const Dashboard = () => {
                       <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                         <Badge variant={a.status === "Ativo" ? "success" : a.status === "Inativo" ? "danger" : "default"}>{a.status || "—"}</Badge>
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</Badge>
-                        {a.comprometimento && <Badge>{a.comprometimento}</Badge>}
+                        {a.ligacao_politica && <Badge>{a.ligacao_politica}</Badge>}
                       </div>
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -379,7 +373,7 @@ const Dashboard = () => {
                     <TableHead className="font-bold text-foreground">Município</TableHead>
                     <TableHead className="font-bold text-foreground">Status</TableHead>
                     <TableHead className="font-bold text-foreground">Sócio</TableHead>
-                    <TableHead className="font-bold text-foreground">Comprometimento</TableHead>
+                    <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
                     <TableHead className="font-bold text-foreground">Cadastro</TableHead>
                     <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
                   </TableRow>
@@ -396,7 +390,7 @@ const Dashboard = () => {
                       <TableCell>
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sim" : "Não"}</Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs">{a.comprometimento || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{a.ligacao_politica || "—"}</TableCell>
                       <TableCell className="text-muted-foreground text-xs">{formatDate(a.criado_em)}</TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-1">
@@ -440,7 +434,7 @@ const Dashboard = () => {
                 <div className="flex gap-2 mt-3">
                   <Badge variant={viewItem.status === "Ativo" ? "success" : viewItem.status === "Inativo" ? "danger" : "default"}>{viewItem.status || "—"}</Badge>
                   <Badge variant={viewItem.eh_socio_atual ? "primary" : "default"}>{viewItem.eh_socio_atual ? "Sócio Ativo" : "Não Sócio"}</Badge>
-                  {viewItem.comprometimento && <Badge>{viewItem.comprometimento}</Badge>}
+                  {viewItem.ligacao_politica && <Badge>{viewItem.ligacao_politica}</Badge>}
                 </div>
               </div>
 
@@ -481,13 +475,10 @@ const Dashboard = () => {
 
                 <Separator className="my-2" />
 
-                <SectionTitle icon={Award}>Perfil Político</SectionTitle>
+                <SectionTitle icon={MapPin}>Informações Adicionais</SectionTitle>
                 <div className="grid grid-cols-2 gap-x-4">
                   <InfoItem label="Ligação Política" value={viewItem.ligacao_politica} />
-                  <InfoItem label="Posição" value={viewItem.posicao_ligacao} />
-                  <InfoItem label="Região Atuação" value={viewItem.regiao_atuacao} />
-                  <InfoItem label="Apoiadores" value={viewItem.apoiadores ? String(viewItem.apoiadores) : null} />
-                  <InfoItem label="Meta Votos" value={viewItem.meta_votos ? String(viewItem.meta_votos) : null} />
+                  <InfoItem label="Status" value={viewItem.status} />
                 </div>
 
                 {viewItem.observacoes && (

@@ -9,28 +9,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, ExternalLink, User, Vote, Star, Building2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, User, Vote, Building2 } from "lucide-react";
 
 const SITUACOES_TITULO = ["Regular", "Cancelado", "Suspenso", "Não possui"];
 const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
-const COMPROMETIMENTO_OPTIONS = ["Alto", "Médio", "Baixo", "Indefinido"];
 const UF_OPTIONS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
 
 interface FormData {
   nome: string; cpf: string; telefone: string; whatsapp: string; email: string;
   instagram: string; facebook: string; titulo_eleitor: string; zona_eleitoral: string;
   secao_eleitoral: string; municipio: string; uf: string; colegio_eleitoral: string;
-  situacao_titulo: string; ligacao_politica: string; posicao_ligacao: string;
-  regiao_atuacao: string; apoiadores: number; meta_votos: number; status: string;
-  comprometimento: string; observacoes: string; eh_socio_atual: boolean;
+  situacao_titulo: string; ligacao_politica: string; status: string;
+  observacoes: string; eh_socio_atual: boolean;
   socio_desde: string; ja_foi_socio: boolean; foi_socio_quando: string;
 }
 
 const defaultForm: FormData = {
   nome: "", cpf: "", telefone: "", whatsapp: "", email: "", instagram: "", facebook: "",
   titulo_eleitor: "", zona_eleitoral: "", secao_eleitoral: "", municipio: "", uf: "GO",
-  colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", posicao_ligacao: "",
-  regiao_atuacao: "", apoiadores: 0, meta_votos: 0, status: "Ativo", comprometimento: "",
+  colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", status: "Ativo",
   observacoes: "", eh_socio_atual: false, socio_desde: "", ja_foi_socio: false, foi_socio_quando: "",
 };
 
@@ -67,10 +64,8 @@ const AssociadoForm = () => {
             zona_eleitoral: data.zona_eleitoral || "", secao_eleitoral: data.secao_eleitoral || "",
             municipio: data.municipio || "", uf: data.uf || "GO",
             colegio_eleitoral: data.colegio_eleitoral || "", situacao_titulo: data.situacao_titulo || "",
-            ligacao_politica: data.ligacao_politica || "", posicao_ligacao: data.posicao_ligacao || "",
-            regiao_atuacao: data.regiao_atuacao || "", apoiadores: data.apoiadores || 0,
-            meta_votos: data.meta_votos || 0, status: data.status || "Ativo",
-            comprometimento: data.comprometimento || "", observacoes: data.observacoes || "",
+            ligacao_politica: data.ligacao_politica || "", status: data.status || "Ativo",
+            observacoes: data.observacoes || "",
             eh_socio_atual: data.eh_socio_atual || false, socio_desde: data.socio_desde || "",
             ja_foi_socio: data.ja_foi_socio || false, foi_socio_quando: data.foi_socio_quando || "",
           });
@@ -261,55 +256,20 @@ const AssociadoForm = () => {
               </SelectContent>
             </Select>
           </div>
-        </SectionCard>
-
-        {/* PERFIL E STATUS */}
-        <SectionCard icon={Star} title="PERFIL E STATUS" color="bg-amber-600">
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ligação política</Label>
             <Input value={form.ligacao_politica} onChange={(e) => set("ligacao_politica", e.target.value)} placeholder="A quem é ligado politicamente" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Posição da ligação</Label>
-            <Input value={form.posicao_ligacao} onChange={(e) => set("posicao_ligacao", e.target.value)} placeholder="Cargo político ou função" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Região de atuação</Label>
-            <Input value={form.regiao_atuacao} onChange={(e) => set("regiao_atuacao", e.target.value)} placeholder="Bairro X, Comunidade Y..." className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Apoiadores</Label>
-              <Input type="number" value={form.apoiadores} onChange={(e) => set("apoiadores", Number(e.target.value))} className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Meta votos</Label>
-              <Input type="number" value={form.meta_votos} onChange={(e) => set("meta_votos", Number(e.target.value))} className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status *</Label>
-              <Select value={form.status} onValueChange={(v) => set("status", v)}>
-                <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comprometimento</Label>
-              <Select value={form.comprometimento || ""} onValueChange={(v) => set("comprometimento", v)}>
-                <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue placeholder="Selecione..." /></SelectTrigger>
-                <SelectContent>
-                  {COMPROMETIMENTO_OPTIONS.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status *</Label>
+            <Select value={form.status} onValueChange={(v) => set("status", v)}>
+              <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Observações</Label>
