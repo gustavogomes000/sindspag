@@ -68,6 +68,7 @@ const AppLayout = () => {
           })}
         </div>
       </nav>
+      <InstallPrompt />
     </div>
   );
 };
