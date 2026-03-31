@@ -475,13 +475,10 @@ const Dashboard = () => {
 
                 <Separator className="my-2" />
 
-                <SectionTitle icon={Award}>Perfil Político</SectionTitle>
+                <SectionTitle icon={MapPin}>Informações Adicionais</SectionTitle>
                 <div className="grid grid-cols-2 gap-x-4">
                   <InfoItem label="Ligação Política" value={viewItem.ligacao_politica} />
-                  <InfoItem label="Posição" value={viewItem.posicao_ligacao} />
-                  <InfoItem label="Região Atuação" value={viewItem.regiao_atuacao} />
-                  <InfoItem label="Apoiadores" value={viewItem.apoiadores ? String(viewItem.apoiadores) : null} />
-                  <InfoItem label="Meta Votos" value={viewItem.meta_votos ? String(viewItem.meta_votos) : null} />
+                  <InfoItem label="Status" value={viewItem.status} />
                 </div>
 
                 {viewItem.observacoes && (
