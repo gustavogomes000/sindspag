@@ -19,17 +19,15 @@ interface FormData {
   nome: string; cpf: string; telefone: string; whatsapp: string; email: string;
   instagram: string; facebook: string; titulo_eleitor: string; zona_eleitoral: string;
   secao_eleitoral: string; municipio: string; uf: string; colegio_eleitoral: string;
-  situacao_titulo: string; ligacao_politica: string; posicao_ligacao: string;
-  regiao_atuacao: string; apoiadores: number; meta_votos: number; status: string;
-  comprometimento: string; observacoes: string; eh_socio_atual: boolean;
+  situacao_titulo: string; ligacao_politica: string; status: string;
+  observacoes: string; eh_socio_atual: boolean;
   socio_desde: string; ja_foi_socio: boolean; foi_socio_quando: string;
 }
 
 const defaultForm: FormData = {
   nome: "", cpf: "", telefone: "", whatsapp: "", email: "", instagram: "", facebook: "",
   titulo_eleitor: "", zona_eleitoral: "", secao_eleitoral: "", municipio: "", uf: "GO",
-  colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", posicao_ligacao: "",
-  regiao_atuacao: "", apoiadores: 0, meta_votos: 0, status: "Ativo", comprometimento: "",
+  colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", status: "Ativo",
   observacoes: "", eh_socio_atual: false, socio_desde: "", ja_foi_socio: false, foi_socio_quando: "",
 };
 
