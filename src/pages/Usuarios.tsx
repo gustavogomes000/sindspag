@@ -106,7 +106,7 @@ const Usuarios = () => {
       toast.error("Digite a nova senha");
       return;
     }
-    const { data, error } = await supabase.rpc("sindspag_resetar_senha", {
+    const { data, error } = await (supabase.rpc as any)("sindspag_resetar_senha", {
       p_user_id: resetUser.id,
       p_nova_senha: novaSenha,
     });
