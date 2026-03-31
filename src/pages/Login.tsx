@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Lock, User } from "lucide-react";
+import InstallPrompt from "@/components/InstallPrompt";
 
 const STORAGE_KEY = "sindspag_remember";
 
@@ -149,6 +150,7 @@ const Login = () => {
           Sindicato dos Servidores Públicos Municipais de Aparecida de Goiânia
         </p>
       </div>
+      <InstallPrompt />
     </div>
   );
 };
