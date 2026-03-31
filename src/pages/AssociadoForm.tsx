@@ -36,15 +36,15 @@ const defaultForm: FormData = {
 
 const SectionCard = ({ icon: Icon, title, color, children }: { icon: any; title: string; color: string; children: React.ReactNode }) => (
   <Card className="shadow-card border-0 overflow-hidden">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center gap-2.5 text-base">
-        <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${color}`}>
-          <Icon className="h-4 w-4 text-white" />
+    <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
+      <CardTitle className="flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base">
+        <div className={`h-7 w-7 sm:h-8 sm:w-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
         </div>
         <span className="font-bold text-foreground">{title}</span>
       </CardTitle>
     </CardHeader>
-    <CardContent className="space-y-4">{children}</CardContent>
+    <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">{children}</CardContent>
   </Card>
 );
 
