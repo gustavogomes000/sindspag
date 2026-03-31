@@ -111,18 +111,18 @@ const AssociadoForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-5">
       {id && (
-        <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2 rounded-xl hover:bg-muted">
+        <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2 rounded-xl hover:bg-muted h-9 text-sm">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
       )}
 
       <div>
-        <h1 className="text-2xl font-extrabold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">
           {isNew ? "Cadastrar Associado" : "Editar Associado"}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
           {isNew ? "Preencha os dados para cadastrar um novo associado" : "Atualize as informações do associado"}
         </p>
       </div>
