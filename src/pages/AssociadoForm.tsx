@@ -317,11 +317,11 @@ const AssociadoForm = () => {
           </div>
         </SectionCard>
 
-        <div className="flex gap-3 justify-end pb-4">
-          <Button type="button" variant="outline" onClick={() => navigate("/associados")} className="rounded-xl h-11 px-6">
+        <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end pb-4">
+          <Button type="button" variant="outline" onClick={() => navigate("/associados")} className="rounded-xl h-11 px-6 w-full sm:w-auto">
             Cancelar
           </Button>
-          <Button type="submit" disabled={loading} className="rounded-xl h-11 px-8 gradient-primary border-0 shadow-elevated font-bold">
+          <Button type="submit" disabled={loading} className="rounded-xl h-11 px-8 gradient-primary border-0 shadow-elevated font-bold w-full sm:w-auto">
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
