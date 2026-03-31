@@ -373,7 +373,7 @@ const Dashboard = () => {
                     <TableHead className="font-bold text-foreground">Município</TableHead>
                     <TableHead className="font-bold text-foreground">Status</TableHead>
                     <TableHead className="font-bold text-foreground">Sócio</TableHead>
-                    <TableHead className="font-bold text-foreground">Comprometimento</TableHead>
+                    <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
                     <TableHead className="font-bold text-foreground">Cadastro</TableHead>
                     <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
                   </TableRow>
