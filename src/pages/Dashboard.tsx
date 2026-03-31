@@ -390,7 +390,7 @@ const Dashboard = () => {
                       <TableCell>
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sim" : "Não"}</Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs">{a.comprometimento || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{a.ligacao_politica || "—"}</TableCell>
                       <TableCell className="text-muted-foreground text-xs">{formatDate(a.criado_em)}</TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-1">
