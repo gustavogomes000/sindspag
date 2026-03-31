@@ -1,17 +1,66 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus } from "lucide-react";
+import { Search, Edit, Trash2, Users, UserCheck, UserX, Plus, Download, Eye, CalendarDays, ChevronDown, ChevronUp, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+type Associado = {
+  id: string;
+  nome: string;
+  cpf: string | null;
+  telefone: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  titulo_eleitor: string | null;
+  zona_eleitoral: string | null;
+  secao_eleitoral: string | null;
+  municipio: string | null;
+  uf: string | null;
+  colegio_eleitoral: string | null;
+  situacao_titulo: string | null;
+  ligacao_politica: string | null;
+  posicao_ligacao: string | null;
+  regiao_atuacao: string | null;
+  eh_socio_atual: boolean | null;
+  socio_desde: string | null;
+  ja_foi_socio: boolean | null;
+  foi_socio_quando: string | null;
+  apoiadores: number | null;
+  meta_votos: number | null;
+  comprometimento: string | null;
+  status: string | null;
+  observacoes: string | null;
+  criado_em: string;
+  atualizado_em: string;
+};
+
+const formatDate = (d: string | null) => {
+  if (!d) return "—";
+  try {
+    return new Date(d).toLocaleDateString("pt-BR");
+  } catch {
+    return d;
+  }
+};
 
 const Dashboard = () => {
   const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [socioFilter, setSocioFilter] = useState("todos");
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewItem, setViewItem] = useState<Associado | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -23,7 +72,7 @@ const Dashboard = () => {
         .select("*")
         .order("nome");
       if (error) throw error;
-      return data;
+      return data as Associado[];
     },
   });
 
@@ -38,15 +87,80 @@ const Dashboard = () => {
     }
   };
 
-  const filtered = associados?.filter((a) =>
-    a.nome.toLowerCase().includes(search.toLowerCase()) ||
-    a.telefone?.toLowerCase().includes(search.toLowerCase()) ||
-    a.cpf?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    if (!associados) return [];
+    return associados.filter((a) => {
+      const matchSearch = !search ||
+        a.nome.toLowerCase().includes(search.toLowerCase()) ||
+        a.telefone?.toLowerCase().includes(search.toLowerCase()) ||
+        a.cpf?.toLowerCase().includes(search.toLowerCase()) ||
+        a.email?.toLowerCase().includes(search.toLowerCase()) ||
+        a.municipio?.toLowerCase().includes(search.toLowerCase());
+
+      const matchStatus = statusFilter === "todos" || a.status === statusFilter;
+
+      const matchSocio = socioFilter === "todos" ||
+        (socioFilter === "sim" && a.eh_socio_atual) ||
+        (socioFilter === "nao" && !a.eh_socio_atual);
+
+      const created = new Date(a.criado_em);
+      const matchDateFrom = !dateFrom || created >= new Date(dateFrom);
+      const matchDateTo = !dateTo || created <= new Date(dateTo + "T23:59:59");
+
+      return matchSearch && matchStatus && matchSocio && matchDateFrom && matchDateTo;
+    });
+  }, [associados, search, statusFilter, socioFilter, dateFrom, dateTo]);
 
   const totalAssociados = associados?.length || 0;
   const totalSocios = associados?.filter(a => a.eh_socio_atual).length || 0;
   const totalNaoSocios = totalAssociados - totalSocios;
+
+  const exportCSV = () => {
+    if (!filtered.length) return toast.error("Nenhum dado para exportar");
+    const headers = [
+      "Nome", "CPF", "Telefone", "WhatsApp", "Email", "Instagram", "Facebook",
+      "Título Eleitor", "Zona Eleitoral", "Seção Eleitoral", "Município", "UF",
+      "Colégio Eleitoral", "Situação Título", "Ligação Política", "Posição Ligação",
+      "Região Atuação", "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
+      "Apoiadores", "Meta Votos", "Comprometimento", "Status", "Observações", "Cadastrado Em"
+    ];
+    const rows = filtered.map(a => [
+      a.nome, a.cpf || "", a.telefone || "", a.whatsapp || "", a.email || "",
+      a.instagram || "", a.facebook || "", a.titulo_eleitor || "", a.zona_eleitoral || "",
+      a.secao_eleitoral || "", a.municipio || "", a.uf || "", a.colegio_eleitoral || "",
+      a.situacao_titulo || "", a.ligacao_politica || "", a.posicao_ligacao || "",
+      a.regiao_atuacao || "", a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
+      a.ja_foi_socio ? "Sim" : "Não", a.foi_socio_quando || "",
+      String(a.apoiadores || 0), String(a.meta_votos || 0), a.comprometimento || "",
+      a.status || "", a.observacoes || "", formatDate(a.criado_em)
+    ]);
+    const csvContent = "\uFEFF" + [headers, ...rows].map(r => r.map(c => `"${(c || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `associados_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${filtered.length} registros exportados`);
+  };
+
+  const clearFilters = () => {
+    setDateFrom("");
+    setDateTo("");
+    setStatusFilter("todos");
+    setSocioFilter("todos");
+    setSearch("");
+  };
+
+  const hasActiveFilters = dateFrom || dateTo || statusFilter !== "todos" || socioFilter !== "todos";
+
+  const InfoRow = ({ label, value }: { label: string; value: string | null | undefined }) => (
+    <div className="flex justify-between items-start py-2 border-b border-border/50 last:border-0">
+      <span className="text-xs font-medium text-muted-foreground shrink-0 mr-3">{label}</span>
+      <span className="text-sm text-foreground text-right">{value || "—"}</span>
+    </div>
+  );
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -54,15 +168,27 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">Associados</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Gerencie os associados cadastrados</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            {filtered.length} de {totalAssociados} registros
+          </p>
         </div>
-        <Button
-          onClick={() => navigate("/cadastro")}
-          className="rounded-xl h-10 sm:h-11 px-3 sm:px-5 gradient-primary border-0 shadow-elevated font-bold text-sm gap-1.5"
-        >
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Novo</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={exportCSV}
+            className="rounded-xl h-10 sm:h-11 px-3 shadow-card border-0 bg-card font-bold text-xs sm:text-sm gap-1.5"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+          <Button
+            onClick={() => navigate("/cadastro")}
+            className="rounded-xl h-10 sm:h-11 px-3 sm:px-5 gradient-primary border-0 shadow-elevated font-bold text-xs sm:text-sm gap-1.5"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Novo</span>
+          </Button>
+        </div>
       </div>
 
       {/* Stats cards */}
@@ -102,16 +228,78 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por nome, telefone ou CPF..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 h-11 rounded-xl bg-card shadow-card border-0"
-        />
+      {/* Search + Filters toggle */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar nome, telefone, CPF, email, município..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 h-11 rounded-xl bg-card shadow-card border-0"
+          />
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className={`rounded-xl h-11 px-3 shadow-card border-0 bg-card shrink-0 ${hasActiveFilters ? "text-primary" : ""}`}
+        >
+          <CalendarDays className="h-4 w-4" />
+          {showFilters ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+        </Button>
       </div>
+
+      {/* Filter panel */}
+      {showFilters && (
+        <Card className="shadow-card border-0 animate-in slide-in-from-top-2 duration-200">
+          <CardContent className="p-3 sm:p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-foreground">Filtros</p>
+              {hasActiveFilters && (
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="h-7 text-xs text-muted-foreground gap-1">
+                  <X className="h-3 w-3" /> Limpar
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div>
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">De</label>
+                <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="h-9 rounded-lg text-xs bg-background" />
+              </div>
+              <div>
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">Até</label>
+                <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="h-9 rounded-lg text-xs bg-background" />
+              </div>
+              <div>
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">Status</label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="h-9 rounded-lg text-xs bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    <SelectItem value="Ativo">Ativo</SelectItem>
+                    <SelectItem value="Inativo">Inativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">Sócio</label>
+                <Select value={socioFilter} onValueChange={setSocioFilter}>
+                  <SelectTrigger className="h-9 rounded-lg text-xs bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    <SelectItem value="sim">Sim</SelectItem>
+                    <SelectItem value="nao">Não</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Table / Cards */}
       {isLoading ? (
@@ -122,48 +310,39 @@ const Dashboard = () => {
         <>
           {/* Mobile card view */}
           <div className="block sm:hidden space-y-2">
-            {filtered?.map((a) => (
+            {filtered.map((a) => (
               <Card key={a.id} className="shadow-card border-0">
                 <CardContent className="p-3">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1" onClick={() => setViewItem(a)} role="button">
                       <p className="font-bold text-sm text-foreground truncate">{a.nome}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">{a.telefone || "Sem telefone"}</p>
-                      <div className="flex items-center gap-1.5 mt-2">
+                      {a.municipio && <p className="text-[10px] text-muted-foreground">{a.municipio}/{a.uf}</p>}
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          a.status === "Ativo"
-                            ? "bg-emerald-500/10 text-emerald-700"
-                            : a.status === "Inativo"
-                            ? "bg-red-500/10 text-red-700"
+                          a.status === "Ativo" ? "bg-emerald-500/10 text-emerald-700"
+                            : a.status === "Inativo" ? "bg-red-500/10 text-red-700"
                             : "bg-muted text-muted-foreground"
-                        }`}>
-                          {a.status || "—"}
-                        </span>
+                        }`}>{a.status || "—"}</span>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          a.eh_socio_atual
-                            ? "bg-primary/10 text-primary"
-                            : "bg-muted text-muted-foreground"
-                        }`}>
-                          {a.eh_socio_atual ? "Sócio" : "Não sócio"}
-                        </span>
+                          a.eh_socio_atual ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                        }`}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</span>
+                        {a.comprometimento && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground">
+                            {a.comprometimento}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-1 shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => navigate(`/associado/${a.id}`)}
-                        className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8"
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => setViewItem(a)} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8">
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8">
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
                       {user?.cargo === "admin" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(a.id)}
-                          className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8"
-                        >
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8">
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       )}
@@ -172,7 +351,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             ))}
-            {filtered?.length === 0 && (
+            {filtered.length === 0 && (
               <div className="text-center text-muted-foreground py-12">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
                 Nenhum associado encontrado
@@ -182,78 +361,132 @@ const Dashboard = () => {
 
           {/* Desktop table view */}
           <Card className="hidden sm:block shadow-card border-0 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="font-bold text-foreground">Nome</TableHead>
-                  <TableHead className="font-bold text-foreground">Telefone</TableHead>
-                  <TableHead className="font-bold text-foreground">Status</TableHead>
-                  <TableHead className="font-bold text-foreground">Sócio</TableHead>
-                  <TableHead className="w-24 font-bold text-foreground">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered?.map((a) => (
-                  <TableRow key={a.id} className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="font-semibold">{a.nome}</TableCell>
-                    <TableCell className="text-muted-foreground">{a.telefone || "—"}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        a.status === "Ativo"
-                          ? "bg-emerald-500/10 text-emerald-700"
-                          : a.status === "Inativo"
-                          ? "bg-red-500/10 text-red-700"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {a.status || "—"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        a.eh_socio_atual
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {a.eh_socio_atual ? "Sim" : "Não"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => navigate(`/associado/${a.id}`)}
-                          className="rounded-xl hover:bg-primary/10 hover:text-primary"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        {user?.cargo === "admin" && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(a.id)}
-                            className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="font-bold text-foreground">Nome</TableHead>
+                    <TableHead className="font-bold text-foreground">Telefone</TableHead>
+                    <TableHead className="font-bold text-foreground">Município</TableHead>
+                    <TableHead className="font-bold text-foreground">Status</TableHead>
+                    <TableHead className="font-bold text-foreground">Sócio</TableHead>
+                    <TableHead className="font-bold text-foreground">Comprometimento</TableHead>
+                    <TableHead className="font-bold text-foreground">Cadastro</TableHead>
+                    <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((a) => (
+                    <TableRow key={a.id} className="hover:bg-muted/30 transition-colors cursor-pointer" onDoubleClick={() => setViewItem(a)}>
+                      <TableCell className="font-semibold">{a.nome}</TableCell>
+                      <TableCell className="text-muted-foreground">{a.telefone || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{a.municipio ? `${a.municipio}/${a.uf}` : "—"}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          a.status === "Ativo" ? "bg-emerald-500/10 text-emerald-700"
+                            : a.status === "Inativo" ? "bg-red-500/10 text-red-700"
+                            : "bg-muted text-muted-foreground"
+                        }`}>{a.status || "—"}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          a.eh_socio_atual ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                        }`}>{a.eh_socio_atual ? "Sim" : "Não"}</span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{a.comprometimento || "—"}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{formatDate(a.criado_em)}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => setViewItem(a)} className="rounded-xl hover:bg-primary/10 hover:text-primary">
+                            <Eye className="h-4 w-4" />
                           </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filtered?.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
-                      <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                      Nenhum associado encontrado
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                          <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          {user?.cargo === "admin" && (
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filtered.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center text-muted-foreground py-12">
+                        <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                        Nenhum associado encontrado
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </Card>
         </>
       )}
+
+      {/* View detail dialog */}
+      <Dialog open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-extrabold">{viewItem?.nome}</DialogTitle>
+          </DialogHeader>
+          {viewItem && (
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-bold text-primary mb-1">Dados Pessoais</p>
+                <InfoRow label="CPF" value={viewItem.cpf} />
+                <InfoRow label="Telefone" value={viewItem.telefone} />
+                <InfoRow label="WhatsApp" value={viewItem.whatsapp} />
+                <InfoRow label="Email" value={viewItem.email} />
+                <InfoRow label="Instagram" value={viewItem.instagram} />
+                <InfoRow label="Facebook" value={viewItem.facebook} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-primary mb-1">Dados Eleitorais</p>
+                <InfoRow label="Título Eleitor" value={viewItem.titulo_eleitor} />
+                <InfoRow label="Zona Eleitoral" value={viewItem.zona_eleitoral} />
+                <InfoRow label="Seção Eleitoral" value={viewItem.secao_eleitoral} />
+                <InfoRow label="Município" value={viewItem.municipio} />
+                <InfoRow label="UF" value={viewItem.uf} />
+                <InfoRow label="Colégio Eleitoral" value={viewItem.colegio_eleitoral} />
+                <InfoRow label="Situação Título" value={viewItem.situacao_titulo} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-primary mb-1">Vínculo Sindical</p>
+                <InfoRow label="Sócio Atual" value={viewItem.eh_socio_atual ? "Sim" : "Não"} />
+                <InfoRow label="Sócio Desde" value={formatDate(viewItem.socio_desde)} />
+                <InfoRow label="Já Foi Sócio" value={viewItem.ja_foi_socio ? "Sim" : "Não"} />
+                <InfoRow label="Período Anterior" value={viewItem.foi_socio_quando} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-primary mb-1">Perfil Político</p>
+                <InfoRow label="Ligação Política" value={viewItem.ligacao_politica} />
+                <InfoRow label="Posição" value={viewItem.posicao_ligacao} />
+                <InfoRow label="Região Atuação" value={viewItem.regiao_atuacao} />
+                <InfoRow label="Apoiadores" value={String(viewItem.apoiadores || 0)} />
+                <InfoRow label="Meta Votos" value={String(viewItem.meta_votos || 0)} />
+                <InfoRow label="Comprometimento" value={viewItem.comprometimento} />
+                <InfoRow label="Status" value={viewItem.status} />
+              </div>
+              {viewItem.observacoes && (
+                <div>
+                  <p className="text-xs font-bold text-primary mb-1">Observações</p>
+                  <p className="text-sm text-foreground bg-muted/50 rounded-lg p-3">{viewItem.observacoes}</p>
+                </div>
+              )}
+              <InfoRow label="Cadastrado em" value={formatDate(viewItem.criado_em)} />
+              <div className="pt-2">
+                <Button onClick={() => { setViewItem(null); navigate(`/associado/${viewItem.id}`); }} className="w-full rounded-xl gradient-primary border-0 font-bold gap-2">
+                  <Edit className="h-4 w-4" /> Editar Associado
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
