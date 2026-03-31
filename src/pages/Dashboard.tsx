@@ -31,15 +31,10 @@ type Associado = {
   colegio_eleitoral: string | null;
   situacao_titulo: string | null;
   ligacao_politica: string | null;
-  posicao_ligacao: string | null;
-  regiao_atuacao: string | null;
   eh_socio_atual: boolean | null;
   socio_desde: string | null;
   ja_foi_socio: boolean | null;
   foi_socio_quando: string | null;
-  apoiadores: number | null;
-  meta_votos: number | null;
-  comprometimento: string | null;
   status: string | null;
   observacoes: string | null;
   criado_em: string;
