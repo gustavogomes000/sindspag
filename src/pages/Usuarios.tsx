@@ -87,7 +87,7 @@ const Usuarios = () => {
 
   const handleEditCargo = async () => {
     if (!editUser) return;
-    const { data, error } = await supabase.rpc("sindspag_atualizar_cargo", {
+    const { data, error } = await (supabase.rpc as any)("sindspag_atualizar_cargo", {
       p_user_id: editUser.id,
       p_cargo: editCargo,
     });
