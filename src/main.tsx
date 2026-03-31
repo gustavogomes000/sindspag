@@ -21,4 +21,11 @@ if (isPreviewHost || isInIframe) {
   });
 }
 
+// Listen for SW updates and auto-reload
+if (!isPreviewHost && !isInIframe && "serviceWorker" in navigator) {
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
+}
+
 createRoot(document.getElementById("root")!).render(<App />);

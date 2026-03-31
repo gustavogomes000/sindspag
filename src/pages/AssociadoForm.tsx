@@ -36,15 +36,15 @@ const defaultForm: FormData = {
 
 const SectionCard = ({ icon: Icon, title, color, children }: { icon: any; title: string; color: string; children: React.ReactNode }) => (
   <Card className="shadow-card border-0 overflow-hidden">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center gap-2.5 text-base">
-        <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${color}`}>
-          <Icon className="h-4 w-4 text-white" />
+    <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
+      <CardTitle className="flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base">
+        <div className={`h-7 w-7 sm:h-8 sm:w-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
         </div>
         <span className="font-bold text-foreground">{title}</span>
       </CardTitle>
     </CardHeader>
-    <CardContent className="space-y-4">{children}</CardContent>
+    <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">{children}</CardContent>
   </Card>
 );
 
@@ -111,23 +111,23 @@ const AssociadoForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-5">
       {id && (
-        <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2 rounded-xl hover:bg-muted">
+        <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2 rounded-xl hover:bg-muted h-9 text-sm">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
       )}
 
       <div>
-        <h1 className="text-2xl font-extrabold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">
           {isNew ? "Cadastrar Associado" : "Editar Associado"}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
           {isNew ? "Preencha os dados para cadastrar um novo associado" : "Atualize as informações do associado"}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         {/* DADOS PESSOAIS */}
         <SectionCard icon={User} title="DADOS PESSOAIS" color="gradient-primary">
           <div>
@@ -317,11 +317,11 @@ const AssociadoForm = () => {
           </div>
         </SectionCard>
 
-        <div className="flex gap-3 justify-end pb-4">
-          <Button type="button" variant="outline" onClick={() => navigate("/associados")} className="rounded-xl h-11 px-6">
+        <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end pb-4">
+          <Button type="button" variant="outline" onClick={() => navigate("/associados")} className="rounded-xl h-11 px-6 w-full sm:w-auto">
             Cancelar
           </Button>
-          <Button type="submit" disabled={loading} className="rounded-xl h-11 px-8 gradient-primary border-0 shadow-elevated font-bold">
+          <Button type="submit" disabled={loading} className="rounded-xl h-11 px-8 gradient-primary border-0 shadow-elevated font-bold w-full sm:w-auto">
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
