@@ -41,7 +41,7 @@ const AppLayout = () => {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto p-3 sm:p-4 md:p-6 pb-20 sm:pb-24">
+      <main className="flex-1 container mx-auto p-3 sm:p-4 md:p-6 pb-20 sm:pb-24 overflow-x-hidden">
         <Outlet />
       </main>
 
