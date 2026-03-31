@@ -75,7 +75,7 @@ const Usuarios = () => {
       return;
     }
     if (!confirm(`Deseja realmente excluir o usuário "${nomeUsuario}"?`)) return;
-    const { data, error } = await supabase.rpc("sindspag_deletar_usuario", { p_user_id: id });
+    const { data, error } = await (supabase.rpc as any)("sindspag_deletar_usuario", { p_user_id: id });
     const result = data as any;
     if (error || !result?.success) {
       toast.error("Erro ao excluir usuário");
