@@ -158,7 +158,7 @@ const Usuarios = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+    <div className="w-full max-w-3xl mx-auto space-y-4 sm:space-y-6 min-w-0">
       <div>
         <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">Usuários</h1>
         <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Gerencie os usuários do sistema</p>
