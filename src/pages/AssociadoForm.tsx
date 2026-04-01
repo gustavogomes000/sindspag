@@ -52,6 +52,8 @@ const AssociadoForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState<FormData>(defaultForm);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (!isNew && id) {
