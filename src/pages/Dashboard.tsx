@@ -88,12 +88,21 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const isAdmin = user?.cargo === "admin";
+
   const { data: associados = [], isLoading, error: queryError, refetch } = useQuery({
-    queryKey: ["sindspag_associados"],
+    queryKey: ["sindspag_associados", user?.id, isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase.from("sindspag_associados").select("*").order("nome");
+      let query = supabase.from("sindspag_associados").select("*, sindspag_usuarios!sindspag_associados_criado_por_fkey(nome)").order("nome");
+      if (!isAdmin && user?.id) {
+        query = query.eq("criado_por", user.id);
+      }
+      const { data, error } = await query;
       if (error) throw error;
-      return (data ?? []) as Associado[];
+      return ((data ?? []) as any[]).map((a) => ({
+        ...a,
+        criado_por_nome: a.sindspag_usuarios?.nome || null,
+      })) as Associado[];
     },
   });
 
