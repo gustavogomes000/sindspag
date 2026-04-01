@@ -76,7 +76,20 @@ const AssociadoForm = () => {
     }
   }, [id, isNew]);
 
-  const set = (key: keyof FormData, value: any) => setForm((f) => ({ ...f, [key]: value }));
+  const set = (key: keyof FormData, value: any) => {
+    setForm((f) => ({ ...f, [key]: value }));
+    if (submitted) setErrors((prev) => { const { [key]: _, ...rest } = prev; return rest; });
+  };
+
+  const FieldError = ({ field }: { field: string }) =>
+    submitted && errors[field] ? (
+      <p className="flex items-center gap-1 text-destructive text-xs mt-1">
+        <AlertCircle className="h-3 w-3 shrink-0" /> {errors[field]}
+      </p>
+    ) : null;
+
+  const inputErr = (field: string) =>
+    submitted && errors[field] ? "ring-2 ring-destructive/50 bg-destructive/5" : "";
 
   const validate = (): Record<string, string> => {
     const errs: Record<string, string> = {};
