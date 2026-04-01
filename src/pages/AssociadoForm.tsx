@@ -58,9 +58,9 @@ const AssociadoForm = () => {
       supabase.from("sindspag_associados").select("*").eq("id", id).single().then(({ data }) => {
         if (data) {
           setForm({
-            nome: data.nome || "", cpf: data.cpf || "", telefone: data.telefone || "",
-            whatsapp: data.whatsapp || "", email: data.email || "", instagram: data.instagram || "",
-            facebook: data.facebook || "", titulo_eleitor: data.titulo_eleitor || "",
+            nome: data.nome || "", cpf: data.cpf || "",
+            whatsapp: data.whatsapp || "", instagram: [data.instagram, data.facebook].filter(Boolean).join(" / ") || "",
+            titulo_eleitor: data.titulo_eleitor || "",
             zona_eleitoral: data.zona_eleitoral || "", secao_eleitoral: data.secao_eleitoral || "",
             municipio: data.municipio || "", uf: data.uf || "GO",
             colegio_eleitoral: data.colegio_eleitoral || "", situacao_titulo: data.situacao_titulo || "",
