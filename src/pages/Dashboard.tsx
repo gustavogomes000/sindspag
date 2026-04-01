@@ -164,7 +164,8 @@ const Dashboard = () => {
       "Título Eleitor", "Zona Eleitoral", "Seção Eleitoral", "Município", "UF",
       "Colégio Eleitoral", "Situação Título", "Ligação Política",
       "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
-      "Status", "Observações", "Cadastrado Em"
+      "Status", "Observações", "Cadastrado Em",
+      ...(isAdmin ? ["Cadastrado Por"] : [])
     ];
     const rows = filtered.map(a => [
       a.nome, a.cpf || "", a.telefone || "", a.whatsapp || "", a.email || "",
@@ -173,7 +174,8 @@ const Dashboard = () => {
       a.situacao_titulo || "", a.ligacao_politica || "",
       a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
       a.ja_foi_socio ? "Sim" : "Não", a.foi_socio_quando || "",
-      a.status || "", a.observacoes || "", formatDate(a.criado_em)
+      a.status || "", a.observacoes || "", formatDate(a.criado_em),
+      ...(isAdmin ? [a.criado_por_nome || ""] : [])
     ]);
 
     const wsData = XLSX.utils.aoa_to_sheet([headers, ...rows]);
