@@ -215,7 +215,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
+    <div className="space-y-4 sm:space-y-6 w-full min-w-0">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -380,8 +380,8 @@ const Dashboard = () => {
 
           {/* Desktop */}
           <Card className="hidden sm:block shadow-card border-0 overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto -mx-0">
+              <Table className="min-w-[700px]">
                 <TableHeader>
                  <TableRow className="bg-muted/50 hover:bg-muted/50">
                      <TableHead className="font-bold text-foreground">Nome</TableHead>
@@ -441,7 +441,7 @@ const Dashboard = () => {
 
       {/* Detail Sheet (slides from right) */}
       <Sheet open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
-        <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0">
+        <SheetContent className="w-[100vw] sm:w-full sm:max-w-md overflow-y-auto p-0">
           {viewItem && (
             <div className="flex flex-col h-full">
               {/* Header */}
