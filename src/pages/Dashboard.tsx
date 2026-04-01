@@ -410,11 +410,11 @@ const Dashboard = () => {
                           <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          {user?.cargo === "admin" && (
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
+                          {isAdmin && (
+                             <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
+                               <Trash2 className="h-4 w-4" />
+                             </Button>
+                           )}
                         </div>
                       </TableCell>
                     </TableRow>
