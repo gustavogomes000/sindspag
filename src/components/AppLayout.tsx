@@ -28,6 +28,20 @@ const AppLayout = () => {
             <span className="text-white/70 text-xs sm:text-sm hidden xs:block">
               <span className="text-white font-semibold">{user.nome}</span>
             </span>
+            <a
+              href="https://wa.me/5562993885258?text=Oi%20Gustavo%2C%20estou%20precisando%20de%20suporte%20com%20o%20SINDSPAG"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-xl h-8 sm:h-9 px-2 sm:px-3"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm">Suporte</span>
+              </Button>
+            </a>
             <Button
               variant="ghost"
               size="sm"
@@ -68,16 +82,6 @@ const AppLayout = () => {
           })}
         </div>
       </nav>
-      {/* Floating WhatsApp support button */}
-      <a
-        href="https://wa.me/5562993885258?text=Oi%20Gustavo%2C%20estou%20precisando%20de%20suporte%20com%20o%20SINDSPAG"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-        aria-label="Fale com o suporte via WhatsApp"
-      >
-        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-      </a>
       <InstallPrompt />
     </div>
   );
