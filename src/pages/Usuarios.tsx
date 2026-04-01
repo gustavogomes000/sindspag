@@ -2,20 +2,27 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
-import { UserPlus, Shield, Trash2, KeyRound, Edit } from "lucide-react";
+import { UserPlus, Shield, Trash2, KeyRound, Edit, Eye, Users } from "lucide-react";
 
 const CARGO_OPTIONS = ["admin", "usuario"];
 
+const formatDate = (d: string | null) => {
+  if (!d) return "—";
+  try { return new Date(d).toLocaleDateString("pt-BR"); } catch { return d || "—"; }
+};
+
 const Usuarios = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
   const [cargo, setCargo] = useState("usuario");
@@ -27,6 +34,8 @@ const Usuarios = () => {
   const [resetUser, setResetUser] = useState<{ id: string; nome: string } | null>(null);
   const [novaSenha, setNovaSenha] = useState("");
 
+  const [viewUser, setViewUser] = useState<{ id: string; nome: string } | null>(null);
+
   const { data: usuarios, refetch } = useQuery({
     queryKey: ["sindspag_usuarios"],
     queryFn: async () => {
@@ -37,6 +46,21 @@ const Usuarios = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  const { data: userAssociados } = useQuery({
+    queryKey: ["user_associados", viewUser?.id],
+    queryFn: async () => {
+      if (!viewUser) return [];
+      const { data, error } = await supabase
+        .from("sindspag_associados")
+        .select("id, nome, telefone, municipio, uf, status, eh_socio_atual, criado_em")
+        .eq("criado_por", viewUser.id)
+        .order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!viewUser,
   });
 
   if (user?.cargo !== "admin") return <Navigate to="/associados" replace />;
@@ -223,6 +247,9 @@ const Usuarios = () => {
                   </span>
                 </div>
                 <div className="flex gap-0.5 shrink-0">
+                  <Button variant="ghost" size="icon" onClick={() => setViewUser({ id: u.id, nome: u.nome })} className="rounded-xl h-8 w-8 hover:bg-primary/10 hover:text-primary" title="Ver cadastros">
+                    <Eye className="h-3.5 w-3.5" />
+                  </Button>
                   <Button variant="ghost" size="icon" onClick={() => { setEditUser(u); setEditCargo(u.cargo); }} className="rounded-xl h-8 w-8" title="Editar cargo">
                     <Edit className="h-3.5 w-3.5" />
                   </Button>
@@ -249,7 +276,7 @@ const Usuarios = () => {
                 <tr className="bg-muted/50 border-b">
                   <th className="text-left font-bold text-foreground text-sm py-3 px-4">Nome</th>
                   <th className="text-left font-bold text-foreground text-sm py-3 px-4">Cargo</th>
-                  <th className="text-left font-bold text-foreground text-sm py-3 px-4 w-32">Ações</th>
+                  <th className="text-left font-bold text-foreground text-sm py-3 px-4 w-44">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,6 +292,9 @@ const Usuarios = () => {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => setViewUser({ id: u.id, nome: u.nome })} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8" title="Ver cadastros">
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
                         <Button variant="ghost" size="icon" onClick={() => { setEditUser(u); setEditCargo(u.cargo); }} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8" title="Editar cargo">
                           <Edit className="h-3.5 w-3.5" />
                         </Button>
@@ -290,6 +320,67 @@ const Usuarios = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* View user associados sheet */}
+      <Sheet open={!!viewUser} onOpenChange={(open) => !open && setViewUser(null)}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto p-0">
+          {viewUser && (
+            <div className="flex flex-col h-full">
+              <div className="gradient-primary p-5 pb-6">
+                <SheetHeader>
+                  <SheetTitle className="text-white text-xl font-extrabold text-left">
+                    Cadastros de {viewUser.nome}
+                  </SheetTitle>
+                </SheetHeader>
+                <p className="text-white/70 text-sm mt-1">
+                  {userAssociados?.length ?? 0} associado(s) cadastrado(s)
+                </p>
+              </div>
+
+              <div className="flex-1 p-4 space-y-2">
+                {userAssociados && userAssociados.length > 0 ? (
+                  userAssociados.map((a) => (
+                    <Card key={a.id} className="shadow-card border-0">
+                      <CardContent className="p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-sm text-foreground truncate">{a.nome}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{a.telefone || "Sem telefone"}</p>
+                            {a.municipio && <p className="text-[10px] text-muted-foreground">{a.municipio}/{a.uf}</p>}
+                            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                                a.status === "Ativo" ? "bg-emerald-500/10 text-emerald-700" : "bg-red-500/10 text-red-700"
+                              }`}>{a.status || "—"}</span>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                                a.eh_socio_atual ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                              }`}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-1">Cadastrado em {formatDate(a.criado_em)}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => { setViewUser(null); navigate(`/associado/${a.id}`); }}
+                            className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8 shrink-0"
+                            title="Editar"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center text-muted-foreground py-12">
+                    <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">Nenhum cadastro realizado</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Edit cargo dialog */}
       <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
