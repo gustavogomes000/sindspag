@@ -59,7 +59,7 @@ const AppLayout = () => {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto min-w-0 px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6 pb-[calc(7.5rem+env(safe-area-inset-bottom))] sm:pb-[calc(8rem+env(safe-area-inset-bottom))] overflow-x-hidden">
+      <main className="flex-1 w-full max-w-5xl mx-auto min-w-0 px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] overflow-x-hidden">
         <Outlet />
       </main>
 
