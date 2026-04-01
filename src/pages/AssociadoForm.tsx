@@ -133,29 +133,13 @@ const AssociadoForm = () => {
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">CPF</Label>
             <Input value={form.cpf} onChange={(e) => set("cpf", e.target.value)} placeholder="000.000.000-00" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Telefone</Label>
-              <Input value={form.telefone} onChange={(e) => set("telefone", e.target.value)} placeholder="(00) 0000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</Label>
-              <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
+          <div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</Label>
+            <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">E-mail</Label>
-            <Input value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="email@exemplo.com" type="email" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instagram</Label>
-              <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Facebook</Label>
-              <Input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} placeholder="Nome ou link" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rede Social</Label>
+            <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario ou link" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
         </SectionCard>
 
