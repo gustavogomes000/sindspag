@@ -380,8 +380,8 @@ const Dashboard = () => {
 
           {/* Desktop */}
           <Card className="hidden sm:block shadow-card border-0 overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto -mx-0">
+              <Table className="min-w-[700px]">
                 <TableHeader>
                  <TableRow className="bg-muted/50 hover:bg-muted/50">
                      <TableHead className="font-bold text-foreground">Nome</TableHead>
