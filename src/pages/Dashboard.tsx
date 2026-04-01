@@ -350,6 +350,9 @@ const Dashboard = () => {
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</Badge>
                         {a.ligacao_politica && <Badge>{a.ligacao_politica}</Badge>}
                       </div>
+                      {isAdmin && a.criado_por_nome && (
+                        <p className="text-[10px] text-muted-foreground mt-1">Por: {a.criado_por_nome}</p>
+                      )}
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8">
