@@ -355,11 +355,11 @@ const Dashboard = () => {
                       <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8">
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
-                      {user?.cargo === "admin" && (
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
+                        {isAdmin && (
+                         <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8">
+                           <Trash2 className="h-3.5 w-3.5" />
+                         </Button>
+                       )}
                     </div>
                   </div>
                 </CardContent>
