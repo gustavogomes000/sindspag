@@ -505,7 +505,10 @@ const Dashboard = () => {
                   </>
                 )}
 
-                <p className="text-[10px] text-muted-foreground pt-3">Cadastrado em {formatDate(viewItem.criado_em)} · Atualizado em {formatDate(viewItem.atualizado_em)}</p>
+                <p className="text-[10px] text-muted-foreground pt-3">
+                  Cadastrado em {formatDate(viewItem.criado_em)} · Atualizado em {formatDate(viewItem.atualizado_em)}
+                  {isAdmin && viewItem.criado_por_nome && ` · Por: ${viewItem.criado_por_nome}`}
+                </p>
               </div>
 
               {/* Footer */}
