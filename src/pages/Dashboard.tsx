@@ -39,6 +39,8 @@ type Associado = {
   observacoes: string | null;
   criado_em: string;
   atualizado_em: string;
+  criado_por: string | null;
+  criado_por_nome?: string | null;
 };
 
 const formatDate = (d: string | null) => {
