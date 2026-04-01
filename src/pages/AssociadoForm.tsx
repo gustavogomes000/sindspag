@@ -78,9 +78,36 @@ const AssociadoForm = () => {
 
   const set = (key: keyof FormData, value: any) => setForm((f) => ({ ...f, [key]: value }));
 
+  const validate = (): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    if (!form.nome.trim()) errs.nome = "Nome é obrigatório";
+    if (!form.cpf.trim()) errs.cpf = "CPF é obrigatório";
+    if (!form.whatsapp.trim()) errs.whatsapp = "WhatsApp é obrigatório";
+    if (!form.instagram.trim()) errs.instagram = "Rede Social é obrigatória";
+    if (form.eh_socio_atual && !form.socio_desde) errs.socio_desde = "Informe desde quando é sócio";
+    if (!form.eh_socio_atual && form.ja_foi_socio && !form.foi_socio_quando.trim()) errs.foi_socio_quando = "Informe quando foi sócio";
+    if (!form.titulo_eleitor.trim()) errs.titulo_eleitor = "Título de eleitor é obrigatório";
+    if (!form.zona_eleitoral.trim()) errs.zona_eleitoral = "Zona é obrigatória";
+    if (!form.secao_eleitoral.trim()) errs.secao_eleitoral = "Seção é obrigatória";
+    if (!form.municipio.trim()) errs.municipio = "Município é obrigatório";
+    if (!form.colegio_eleitoral.trim()) errs.colegio_eleitoral = "Colégio eleitoral é obrigatório";
+    if (!form.ligacao_politica.trim()) errs.ligacao_politica = "Ligação política é obrigatória";
+    return errs;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nome.trim()) { toast.error("Nome é obrigatório"); return; }
+    setSubmitted(true);
+    const errs = validate();
+    setErrors(errs);
+
+    if (Object.keys(errs).length > 0) {
+      const missing = Object.values(errs);
+      toast.error(`Preencha os campos obrigatórios (${missing.length} pendente${missing.length > 1 ? "s" : ""})`, {
+        description: missing.slice(0, 3).join(", ") + (missing.length > 3 ? ` e mais ${missing.length - 3}...` : ""),
+      });
+      return;
+    }
     setLoading(true);
 
     const payload = {
