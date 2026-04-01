@@ -233,17 +233,6 @@ const AssociadoForm = () => {
             <Input value={form.colegio_eleitoral} onChange={(e) => set("colegio_eleitoral", e.target.value)} placeholder="Nome da escola / local" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Situação do título</Label>
-            <Select value={form.situacao_titulo || ""} onValueChange={(v) => set("situacao_titulo", v)}>
-              <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue placeholder="Selecione..." /></SelectTrigger>
-              <SelectContent>
-                {SITUACOES_TITULO.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ligação política</Label>
             <Input value={form.ligacao_politica} onChange={(e) => set("ligacao_politica", e.target.value)} placeholder="A quem é ligado politicamente" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
