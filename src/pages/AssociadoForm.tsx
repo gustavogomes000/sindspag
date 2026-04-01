@@ -83,6 +83,9 @@ const AssociadoForm = () => {
 
     const payload = {
       ...form,
+      telefone: form.whatsapp,
+      email: null,
+      facebook: form.instagram,
       criado_por: isNew ? user?.id : undefined,
       socio_desde: form.eh_socio_atual && form.socio_desde ? form.socio_desde : null,
       ja_foi_socio: !form.eh_socio_atual ? form.ja_foi_socio : false,
