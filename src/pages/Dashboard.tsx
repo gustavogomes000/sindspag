@@ -39,6 +39,8 @@ type Associado = {
   observacoes: string | null;
   criado_em: string;
   atualizado_em: string;
+  criado_por: string | null;
+  criado_por_nome?: string | null;
 };
 
 const formatDate = (d: string | null) => {
@@ -86,12 +88,21 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const isAdmin = user?.cargo === "admin";
+
   const { data: associados = [], isLoading, error: queryError, refetch } = useQuery({
-    queryKey: ["sindspag_associados"],
+    queryKey: ["sindspag_associados", user?.id, isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase.from("sindspag_associados").select("*").order("nome");
+      let query = supabase.from("sindspag_associados").select("*, sindspag_usuarios!sindspag_associados_criado_por_fkey(nome)").order("nome");
+      if (!isAdmin && user?.id) {
+        query = query.eq("criado_por", user.id);
+      }
+      const { data, error } = await query;
       if (error) throw error;
-      return (data ?? []) as Associado[];
+      return ((data ?? []) as any[]).map((a) => ({
+        ...a,
+        criado_por_nome: a.sindspag_usuarios?.nome || null,
+      })) as Associado[];
     },
   });
 
@@ -153,7 +164,8 @@ const Dashboard = () => {
       "Título Eleitor", "Zona Eleitoral", "Seção Eleitoral", "Município", "UF",
       "Colégio Eleitoral", "Situação Título", "Ligação Política",
       "Sócio Atual", "Sócio Desde", "Já Foi Sócio", "Foi Sócio Quando",
-      "Status", "Observações", "Cadastrado Em"
+      "Status", "Observações", "Cadastrado Em",
+      ...(isAdmin ? ["Cadastrado Por"] : [])
     ];
     const rows = filtered.map(a => [
       a.nome, a.cpf || "", a.telefone || "", a.whatsapp || "", a.email || "",
@@ -162,7 +174,8 @@ const Dashboard = () => {
       a.situacao_titulo || "", a.ligacao_politica || "",
       a.eh_socio_atual ? "Sim" : "Não", a.socio_desde || "",
       a.ja_foi_socio ? "Sim" : "Não", a.foi_socio_quando || "",
-      a.status || "", a.observacoes || "", formatDate(a.criado_em)
+      a.status || "", a.observacoes || "", formatDate(a.criado_em),
+      ...(isAdmin ? [a.criado_por_nome || ""] : [])
     ]);
 
     const wsData = XLSX.utils.aoa_to_sheet([headers, ...rows]);
@@ -339,16 +352,19 @@ const Dashboard = () => {
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sócio" : "Não sócio"}</Badge>
                         {a.ligacao_politica && <Badge>{a.ligacao_politica}</Badge>}
                       </div>
+                      {isAdmin && a.criado_por_nome && (
+                        <p className="text-[10px] text-muted-foreground mt-1">Por: {a.criado_por_nome}</p>
+                      )}
                     </div>
                     <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary h-8 w-8">
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
-                      {user?.cargo === "admin" && (
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
+                        {isAdmin && (
+                         <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 w-8">
+                           <Trash2 className="h-3.5 w-3.5" />
+                         </Button>
+                       )}
                     </div>
                   </div>
                 </CardContent>
@@ -367,16 +383,17 @@ const Dashboard = () => {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50 hover:bg-muted/50">
-                    <TableHead className="font-bold text-foreground">Nome</TableHead>
-                    <TableHead className="font-bold text-foreground">Telefone</TableHead>
-                    <TableHead className="font-bold text-foreground">Município</TableHead>
-                    <TableHead className="font-bold text-foreground">Status</TableHead>
-                    <TableHead className="font-bold text-foreground">Sócio</TableHead>
-                    <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
-                    <TableHead className="font-bold text-foreground">Cadastro</TableHead>
-                    <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
-                  </TableRow>
+                 <TableRow className="bg-muted/50 hover:bg-muted/50">
+                     <TableHead className="font-bold text-foreground">Nome</TableHead>
+                     <TableHead className="font-bold text-foreground">Telefone</TableHead>
+                     <TableHead className="font-bold text-foreground">Município</TableHead>
+                     <TableHead className="font-bold text-foreground">Status</TableHead>
+                     <TableHead className="font-bold text-foreground">Sócio</TableHead>
+                     <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
+                     {isAdmin && <TableHead className="font-bold text-foreground">Cadastrado por</TableHead>}
+                     <TableHead className="font-bold text-foreground">Cadastro</TableHead>
+                     <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
+                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((a) => (
@@ -390,25 +407,26 @@ const Dashboard = () => {
                       <TableCell>
                         <Badge variant={a.eh_socio_atual ? "primary" : "default"}>{a.eh_socio_atual ? "Sim" : "Não"}</Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs">{a.ligacao_politica || "—"}</TableCell>
+                     <TableCell className="text-muted-foreground text-xs">{a.ligacao_politica || "—"}</TableCell>
+                      {isAdmin && <TableCell className="text-muted-foreground text-xs">{a.criado_por_nome || "—"}</TableCell>}
                       <TableCell className="text-muted-foreground text-xs">{formatDate(a.criado_em)}</TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" onClick={() => navigate(`/associado/${a.id}`)} className="rounded-xl hover:bg-primary/10 hover:text-primary">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          {user?.cargo === "admin" && (
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
+                          {isAdmin && (
+                             <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)} className="rounded-xl hover:bg-destructive/10 hover:text-destructive">
+                               <Trash2 className="h-4 w-4" />
+                             </Button>
+                           )}
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
                   {filtered.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center text-muted-foreground py-12">
+                      <TableCell colSpan={isAdmin ? 9 : 8} className="text-center text-muted-foreground py-12">
                         <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
                         Nenhum associado encontrado
                       </TableCell>
@@ -489,7 +507,10 @@ const Dashboard = () => {
                   </>
                 )}
 
-                <p className="text-[10px] text-muted-foreground pt-3">Cadastrado em {formatDate(viewItem.criado_em)} · Atualizado em {formatDate(viewItem.atualizado_em)}</p>
+                <p className="text-[10px] text-muted-foreground pt-3">
+                  Cadastrado em {formatDate(viewItem.criado_em)} · Atualizado em {formatDate(viewItem.atualizado_em)}
+                  {isAdmin && viewItem.criado_por_nome && ` · Por: ${viewItem.criado_por_nome}`}
+                </p>
               </div>
 
               {/* Footer */}
