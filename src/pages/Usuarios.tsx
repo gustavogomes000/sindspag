@@ -270,8 +270,8 @@ const Usuarios = () => {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden sm:block">
-            <table className="w-full">
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="bg-muted/50 border-b">
                   <th className="text-left font-bold text-foreground text-sm py-3 px-4">Nome</th>
