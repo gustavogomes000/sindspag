@@ -378,16 +378,17 @@ const Dashboard = () => {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50 hover:bg-muted/50">
-                    <TableHead className="font-bold text-foreground">Nome</TableHead>
-                    <TableHead className="font-bold text-foreground">Telefone</TableHead>
-                    <TableHead className="font-bold text-foreground">Município</TableHead>
-                    <TableHead className="font-bold text-foreground">Status</TableHead>
-                    <TableHead className="font-bold text-foreground">Sócio</TableHead>
-                    <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
-                    <TableHead className="font-bold text-foreground">Cadastro</TableHead>
-                    <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
-                  </TableRow>
+                 <TableRow className="bg-muted/50 hover:bg-muted/50">
+                     <TableHead className="font-bold text-foreground">Nome</TableHead>
+                     <TableHead className="font-bold text-foreground">Telefone</TableHead>
+                     <TableHead className="font-bold text-foreground">Município</TableHead>
+                     <TableHead className="font-bold text-foreground">Status</TableHead>
+                     <TableHead className="font-bold text-foreground">Sócio</TableHead>
+                     <TableHead className="font-bold text-foreground">Ligação Política</TableHead>
+                     {isAdmin && <TableHead className="font-bold text-foreground">Cadastrado por</TableHead>}
+                     <TableHead className="font-bold text-foreground">Cadastro</TableHead>
+                     <TableHead className="w-28 font-bold text-foreground">Ações</TableHead>
+                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((a) => (
