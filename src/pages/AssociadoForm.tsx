@@ -16,8 +16,8 @@ const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
 const UF_OPTIONS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
 
 interface FormData {
-  nome: string; cpf: string; telefone: string; whatsapp: string; email: string;
-  instagram: string; facebook: string; titulo_eleitor: string; zona_eleitoral: string;
+  nome: string; cpf: string; whatsapp: string;
+  instagram: string; titulo_eleitor: string; zona_eleitoral: string;
   secao_eleitoral: string; municipio: string; uf: string; colegio_eleitoral: string;
   situacao_titulo: string; ligacao_politica: string; status: string;
   observacoes: string; eh_socio_atual: boolean;
@@ -25,7 +25,7 @@ interface FormData {
 }
 
 const defaultForm: FormData = {
-  nome: "", cpf: "", telefone: "", whatsapp: "", email: "", instagram: "", facebook: "",
+  nome: "", cpf: "", whatsapp: "", instagram: "",
   titulo_eleitor: "", zona_eleitoral: "", secao_eleitoral: "", municipio: "", uf: "GO",
   colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", status: "Ativo",
   observacoes: "", eh_socio_atual: false, socio_desde: "", ja_foi_socio: false, foi_socio_quando: "",
