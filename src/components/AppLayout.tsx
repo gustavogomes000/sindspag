@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Users, LogOut, PlusCircle, Settings } from "lucide-react";
+import { Users, LogOut, PlusCircle, Settings, MessageCircle } from "lucide-react";
 import SplashScreen from "./SplashScreen";
 import InstallPrompt from "./InstallPrompt";
 
@@ -68,6 +68,16 @@ const AppLayout = () => {
           })}
         </div>
       </nav>
+      {/* Floating WhatsApp support button */}
+      <a
+        href="https://wa.me/5562993885258?text=Oi%20Gustavo%2C%20estou%20precisando%20de%20suporte%20com%20o%20SINDSPAG"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+        aria-label="Fale com o suporte via WhatsApp"
+      >
+        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+      </a>
       <InstallPrompt />
     </div>
   );

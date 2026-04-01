@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Lock, User } from "lucide-react";
+import { Lock, User, MessageCircle } from "lucide-react";
 import InstallPrompt from "@/components/InstallPrompt";
 
 const STORAGE_KEY = "sindspag_remember";
@@ -146,7 +146,17 @@ const Login = () => {
           </form>
         </div>
 
-        <p className="text-white/40 text-[10px] sm:text-xs text-center mt-5 sm:mt-6 px-4">
+        <a
+          href="https://wa.me/5562993885258?text=Oi%20Gustavo%2C%20estou%20precisando%20de%20suporte%20com%20o%20SINDSPAG"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 text-white/70 hover:text-white text-xs sm:text-sm mt-5 sm:mt-6 transition-colors"
+        >
+          <MessageCircle className="h-4 w-4" />
+          Fale com o suporte
+        </a>
+
+        <p className="text-white/40 text-[10px] sm:text-xs text-center mt-3 px-4">
           Sindicato dos Servidores Públicos Municipais de Aparecida de Goiânia
         </p>
       </div>
