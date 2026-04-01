@@ -16,8 +16,8 @@ const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
 const UF_OPTIONS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
 
 interface FormData {
-  nome: string; cpf: string; telefone: string; whatsapp: string; email: string;
-  instagram: string; facebook: string; titulo_eleitor: string; zona_eleitoral: string;
+  nome: string; cpf: string; whatsapp: string;
+  instagram: string; titulo_eleitor: string; zona_eleitoral: string;
   secao_eleitoral: string; municipio: string; uf: string; colegio_eleitoral: string;
   situacao_titulo: string; ligacao_politica: string; status: string;
   observacoes: string; eh_socio_atual: boolean;
@@ -25,7 +25,7 @@ interface FormData {
 }
 
 const defaultForm: FormData = {
-  nome: "", cpf: "", telefone: "", whatsapp: "", email: "", instagram: "", facebook: "",
+  nome: "", cpf: "", whatsapp: "", instagram: "",
   titulo_eleitor: "", zona_eleitoral: "", secao_eleitoral: "", municipio: "", uf: "GO",
   colegio_eleitoral: "", situacao_titulo: "", ligacao_politica: "", status: "Ativo",
   observacoes: "", eh_socio_atual: false, socio_desde: "", ja_foi_socio: false, foi_socio_quando: "",
@@ -58,9 +58,9 @@ const AssociadoForm = () => {
       supabase.from("sindspag_associados").select("*").eq("id", id).single().then(({ data }) => {
         if (data) {
           setForm({
-            nome: data.nome || "", cpf: data.cpf || "", telefone: data.telefone || "",
-            whatsapp: data.whatsapp || "", email: data.email || "", instagram: data.instagram || "",
-            facebook: data.facebook || "", titulo_eleitor: data.titulo_eleitor || "",
+            nome: data.nome || "", cpf: data.cpf || "",
+            whatsapp: data.whatsapp || "", instagram: [data.instagram, data.facebook].filter(Boolean).join(" / ") || "",
+            titulo_eleitor: data.titulo_eleitor || "",
             zona_eleitoral: data.zona_eleitoral || "", secao_eleitoral: data.secao_eleitoral || "",
             municipio: data.municipio || "", uf: data.uf || "GO",
             colegio_eleitoral: data.colegio_eleitoral || "", situacao_titulo: data.situacao_titulo || "",
@@ -83,6 +83,9 @@ const AssociadoForm = () => {
 
     const payload = {
       ...form,
+      telefone: form.whatsapp,
+      email: null,
+      facebook: form.instagram,
       criado_por: isNew ? user?.id : undefined,
       socio_desde: form.eh_socio_atual && form.socio_desde ? form.socio_desde : null,
       ja_foi_socio: !form.eh_socio_atual ? form.ja_foi_socio : false,
@@ -133,29 +136,13 @@ const AssociadoForm = () => {
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">CPF</Label>
             <Input value={form.cpf} onChange={(e) => set("cpf", e.target.value)} placeholder="000.000.000-00" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Telefone</Label>
-              <Input value={form.telefone} onChange={(e) => set("telefone", e.target.value)} placeholder="(00) 0000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</Label>
-              <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
+          <div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</Label>
+            <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">E-mail</Label>
-            <Input value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="email@exemplo.com" type="email" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instagram</Label>
-              <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
-            <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Facebook</Label>
-              <Input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} placeholder="Nome ou link" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
-            </div>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rede Social</Label>
+            <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario ou link" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
           </div>
         </SectionCard>
 
