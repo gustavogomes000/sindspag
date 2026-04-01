@@ -323,7 +323,7 @@ const Usuarios = () => {
 
       {/* View user associados sheet */}
       <Sheet open={!!viewUser} onOpenChange={(open) => !open && setViewUser(null)}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto p-0">
+        <SheetContent className="w-[100vw] sm:w-full sm:max-w-lg overflow-y-auto p-0">
           {viewUser && (
             <div className="flex flex-col h-full">
               <div className="gradient-primary p-5 pb-6">

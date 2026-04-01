@@ -441,7 +441,7 @@ const Dashboard = () => {
 
       {/* Detail Sheet (slides from right) */}
       <Sheet open={!!viewItem} onOpenChange={(open) => !open && setViewItem(null)}>
-        <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0">
+        <SheetContent className="w-[100vw] sm:w-full sm:max-w-md overflow-y-auto p-0">
           {viewItem && (
             <div className="flex flex-col h-full">
               {/* Header */}

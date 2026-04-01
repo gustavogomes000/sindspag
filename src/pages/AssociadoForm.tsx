@@ -106,7 +106,7 @@ const AssociadoForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-5">
+    <div className="w-full max-w-3xl mx-auto space-y-4 sm:space-y-5 min-w-0">
       {id && (
         <Button variant="ghost" onClick={() => navigate("/associados")} className="gap-2 rounded-xl hover:bg-muted h-9 text-sm">
           <ArrowLeft className="h-4 w-4" /> Voltar
