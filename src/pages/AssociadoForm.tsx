@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, ExternalLink, User, Vote, Building2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, User, Vote, Building2, AlertCircle } from "lucide-react";
 
 
 const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
