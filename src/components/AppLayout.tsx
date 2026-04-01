@@ -22,12 +22,14 @@ const AppLayout = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top header */}
       <header className="gradient-primary shadow-elevated sticky top-0 z-40">
-        <div className="container mx-auto flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4">
+        <div className="container mx-auto flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-4 sm:py-3">
           <span className="font-extrabold text-white text-lg sm:text-xl tracking-tight shrink-0">SINDSPAG</span>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-white/70 text-xs sm:text-sm hidden xs:block min-w-0">
-              <span className="text-white font-semibold truncate">{user.nome}</span>
+
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 flex-wrap">
+            <span className="order-3 basis-full min-w-0 text-white/70 text-xs sm:order-none sm:basis-auto sm:text-sm sm:mr-2">
+              <span className="block truncate text-white font-semibold sm:text-right">{user.nome}</span>
             </span>
+
             <a
               href="https://wa.me/5562993885258?text=Oi%20Gustavo%2C%20estou%20precisando%20de%20suporte%20com%20o%20SINDSPAG"
               target="_blank"
@@ -37,17 +39,18 @@ const AppLayout = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-xl h-8 sm:h-9 px-2 sm:px-3 whitespace-nowrap shrink-0"
+                className="gap-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-xl h-9 px-3 whitespace-nowrap shrink-0"
               >
                 <MessageCircle className="h-4 w-4 shrink-0" />
-                <span className="text-sm">Suporte</span>
+                <span className="text-sm">Suporte/Ajuda</span>
               </Button>
             </a>
+
             <Button
               variant="ghost"
               size="sm"
               onClick={logout}
-              className="gap-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-xl h-8 sm:h-9 px-2 sm:px-3 whitespace-nowrap shrink-0"
+              className="gap-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-xl h-9 px-3 whitespace-nowrap shrink-0"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span className="text-sm">Sair</span>
@@ -56,7 +59,7 @@ const AppLayout = () => {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6 pb-20 sm:pb-24 overflow-x-hidden">
+      <main className="flex-1 w-full max-w-5xl mx-auto min-w-0 px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6 pb-[calc(7.5rem+env(safe-area-inset-bottom))] sm:pb-[calc(8rem+env(safe-area-inset-bottom))] overflow-x-hidden">
         <Outlet />
       </main>
 
