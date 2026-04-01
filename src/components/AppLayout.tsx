@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Users, LogOut, PlusCircle, Settings } from "lucide-react";
+import { Users, LogOut, PlusCircle, Settings, MessageCircle } from "lucide-react";
 import SplashScreen from "./SplashScreen";
 import InstallPrompt from "./InstallPrompt";
 
