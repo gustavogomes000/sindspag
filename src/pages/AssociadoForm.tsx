@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, ExternalLink, User, Vote, Building2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, User, Vote, Building2, AlertCircle } from "lucide-react";
 
 
 const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
@@ -52,6 +52,8 @@ const AssociadoForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState<FormData>(defaultForm);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (!isNew && id) {
@@ -74,11 +76,51 @@ const AssociadoForm = () => {
     }
   }, [id, isNew]);
 
-  const set = (key: keyof FormData, value: any) => setForm((f) => ({ ...f, [key]: value }));
+  const set = (key: keyof FormData, value: any) => {
+    setForm((f) => ({ ...f, [key]: value }));
+    if (submitted) setErrors((prev) => { const { [key]: _, ...rest } = prev; return rest; });
+  };
+
+  const FieldError = ({ field }: { field: string }) =>
+    submitted && errors[field] ? (
+      <p className="flex items-center gap-1 text-destructive text-xs mt-1">
+        <AlertCircle className="h-3 w-3 shrink-0" /> {errors[field]}
+      </p>
+    ) : null;
+
+  const inputErr = (field: string) =>
+    submitted && errors[field] ? "ring-2 ring-destructive/50 bg-destructive/5" : "";
+
+  const validate = (): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    if (!form.nome.trim()) errs.nome = "Nome é obrigatório";
+    if (!form.cpf.trim()) errs.cpf = "CPF é obrigatório";
+    if (!form.whatsapp.trim()) errs.whatsapp = "WhatsApp é obrigatório";
+    if (!form.instagram.trim()) errs.instagram = "Rede Social é obrigatória";
+    if (form.eh_socio_atual && !form.socio_desde) errs.socio_desde = "Informe desde quando é sócio";
+    if (!form.eh_socio_atual && form.ja_foi_socio && !form.foi_socio_quando.trim()) errs.foi_socio_quando = "Informe quando foi sócio";
+    if (!form.titulo_eleitor.trim()) errs.titulo_eleitor = "Título de eleitor é obrigatório";
+    if (!form.zona_eleitoral.trim()) errs.zona_eleitoral = "Zona é obrigatória";
+    if (!form.secao_eleitoral.trim()) errs.secao_eleitoral = "Seção é obrigatória";
+    if (!form.municipio.trim()) errs.municipio = "Município é obrigatório";
+    if (!form.colegio_eleitoral.trim()) errs.colegio_eleitoral = "Colégio eleitoral é obrigatório";
+    if (!form.ligacao_politica.trim()) errs.ligacao_politica = "Ligação política é obrigatória";
+    return errs;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nome.trim()) { toast.error("Nome é obrigatório"); return; }
+    setSubmitted(true);
+    const errs = validate();
+    setErrors(errs);
+
+    if (Object.keys(errs).length > 0) {
+      const missing = Object.values(errs);
+      toast.error(`Preencha os campos obrigatórios (${missing.length} pendente${missing.length > 1 ? "s" : ""})`, {
+        description: missing.slice(0, 3).join(", ") + (missing.length > 3 ? ` e mais ${missing.length - 3}...` : ""),
+      });
+      return;
+    }
     setLoading(true);
 
     const payload = {
@@ -130,26 +172,30 @@ const AssociadoForm = () => {
         <SectionCard icon={User} title="DADOS PESSOAIS" color="gradient-primary">
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nome completo *</Label>
-            <Input value={form.nome} onChange={(e) => set("nome", e.target.value)} placeholder="Nome do associado" required className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Input value={form.nome} onChange={(e) => set("nome", e.target.value)} placeholder="Nome do associado" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("nome")}`} />
+            <FieldError field="nome" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">CPF</Label>
-            <Input value={form.cpf} onChange={(e) => set("cpf", e.target.value)} placeholder="000.000.000-00" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">CPF *</Label>
+            <Input value={form.cpf} onChange={(e) => set("cpf", e.target.value)} placeholder="000.000.000-00" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("cpf")}`} />
+            <FieldError field="cpf" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</Label>
-            <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp *</Label>
+            <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(00) 00000-0000" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("whatsapp")}`} />
+            <FieldError field="whatsapp" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rede Social</Label>
-            <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario ou link" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rede Social *</Label>
+            <Input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@usuario ou link" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("instagram")}`} />
+            <FieldError field="instagram" />
           </div>
         </SectionCard>
 
         {/* VÍNCULO SINDICAL */}
         <SectionCard icon={Building2} title="VÍNCULO SINDICAL" color="bg-emerald-600">
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">É sócio atualmente?</Label>
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">É sócio atualmente? *</Label>
             <Select value={form.eh_socio_atual ? "sim" : "nao"} onValueChange={(v) => set("eh_socio_atual", v === "sim")}>
               <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -160,8 +206,9 @@ const AssociadoForm = () => {
           </div>
           {form.eh_socio_atual && (
             <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sócio desde</Label>
-              <Input type="date" value={form.socio_desde} onChange={(e) => set("socio_desde", e.target.value)} className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sócio desde *</Label>
+              <Input type="date" value={form.socio_desde} onChange={(e) => set("socio_desde", e.target.value)} className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("socio_desde")}`} />
+              <FieldError field="socio_desde" />
             </div>
           )}
           {!form.eh_socio_atual && (
@@ -178,8 +225,9 @@ const AssociadoForm = () => {
               </div>
               {form.ja_foi_socio && (
                 <div>
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quando foi sócio?</Label>
-                  <Input value={form.foi_socio_quando} onChange={(e) => set("foi_socio_quando", e.target.value)} placeholder="Ex: 2018 a 2021" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quando foi sócio? *</Label>
+                  <Input value={form.foi_socio_quando} onChange={(e) => set("foi_socio_quando", e.target.value)} placeholder="Ex: 2018 a 2021" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("foi_socio_quando")}`} />
+                  <FieldError field="foi_socio_quando" />
                 </div>
               )}
             </>
@@ -198,26 +246,30 @@ const AssociadoForm = () => {
           </a>
           <p className="text-xs text-muted-foreground">Abra o site do TSE, consulte os dados e preencha abaixo.</p>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Título de eleitor</Label>
-            <Input value={form.titulo_eleitor} onChange={(e) => set("titulo_eleitor", e.target.value)} placeholder="Número do título" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Título de eleitor *</Label>
+            <Input value={form.titulo_eleitor} onChange={(e) => set("titulo_eleitor", e.target.value)} placeholder="Número do título" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("titulo_eleitor")}`} />
+            <FieldError field="titulo_eleitor" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zona</Label>
-              <Input value={form.zona_eleitoral} onChange={(e) => set("zona_eleitoral", e.target.value)} placeholder="045" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zona *</Label>
+              <Input value={form.zona_eleitoral} onChange={(e) => set("zona_eleitoral", e.target.value)} placeholder="045" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("zona_eleitoral")}`} />
+              <FieldError field="zona_eleitoral" />
             </div>
             <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seção</Label>
-              <Input value={form.secao_eleitoral} onChange={(e) => set("secao_eleitoral", e.target.value)} placeholder="0123" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seção *</Label>
+              <Input value={form.secao_eleitoral} onChange={(e) => set("secao_eleitoral", e.target.value)} placeholder="0123" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("secao_eleitoral")}`} />
+              <FieldError field="secao_eleitoral" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Município</Label>
-              <Input value={form.municipio} onChange={(e) => set("municipio", e.target.value)} placeholder="Cidade" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Município *</Label>
+              <Input value={form.municipio} onChange={(e) => set("municipio", e.target.value)} placeholder="Cidade" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("municipio")}`} />
+              <FieldError field="municipio" />
             </div>
             <div>
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">UF</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">UF *</Label>
               <Select value={form.uf} onValueChange={(v) => set("uf", v)}>
                 <SelectTrigger className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -229,12 +281,14 @@ const AssociadoForm = () => {
             </div>
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Colégio eleitoral</Label>
-            <Input value={form.colegio_eleitoral} onChange={(e) => set("colegio_eleitoral", e.target.value)} placeholder="Nome da escola / local" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Colégio eleitoral *</Label>
+            <Input value={form.colegio_eleitoral} onChange={(e) => set("colegio_eleitoral", e.target.value)} placeholder="Nome da escola / local" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("colegio_eleitoral")}`} />
+            <FieldError field="colegio_eleitoral" />
           </div>
           <div>
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ligação política</Label>
-            <Input value={form.ligacao_politica} onChange={(e) => set("ligacao_politica", e.target.value)} placeholder="A quem é ligado politicamente" className="mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background" />
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ligação política *</Label>
+            <Input value={form.ligacao_politica} onChange={(e) => set("ligacao_politica", e.target.value)} placeholder="A quem é ligado politicamente" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("ligacao_politica")}`} />
+            <FieldError field="ligacao_politica" />
           </div>
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status *</Label>
