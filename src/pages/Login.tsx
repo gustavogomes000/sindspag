@@ -52,9 +52,16 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const result = await login(trimmedNome, senha);
+      const result = await login(trimmedNome, trimmedSenha);
       if (result.success) {
+        // Use both navigate and fallback to ensure redirect always works
         navigate("/associados", { replace: true });
+        // Fallback: if navigate didn't trigger re-render, force it
+        setTimeout(() => {
+          if (window.location.pathname === "/") {
+            window.location.href = "/associados";
+          }
+        }, 300);
       } else {
         setError(result.message || "Erro ao fazer login");
       }
