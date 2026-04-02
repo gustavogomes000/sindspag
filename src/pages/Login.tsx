@@ -159,7 +159,6 @@ const Login = () => {
           Sindicato dos Servidores Públicos Municipais de Aparecida de Goiânia
         </p>
       </div>
-      <InstallPrompt />
     </div>
   );
 };
