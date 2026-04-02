@@ -23,9 +23,8 @@ const Login = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const { nome: n, senha: s } = JSON.parse(saved);
-        if (n) setNome(n);
-        if (s) setSenha(s);
+        const parsed = JSON.parse(saved);
+        if (parsed.nome) setNome(parsed.nome);
         setLembrar(true);
       } catch {}
     }
@@ -47,7 +46,7 @@ const Login = () => {
       return;
     }
     if (lembrar) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nome: trimmedNome, senha }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nome: trimmedNome }));
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -119,7 +118,7 @@ const Login = () => {
                 onCheckedChange={(checked) => setLembrar(checked === true)}
               />
               <Label htmlFor="lembrar" className="text-xs sm:text-sm text-muted-foreground cursor-pointer select-none">
-                Lembrar usuário e senha
+                Lembrar meu usuário
               </Label>
             </div>
 
