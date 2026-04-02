@@ -11,6 +11,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ArrowLeft, ExternalLink, User, Vote, Building2, AlertCircle } from "lucide-react";
 
+const maskCPF = (v: string) => {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  return d.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+};
+
+const maskPhone = (v: string) => {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d.length ? `(${d}` : "";
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+};
+
 
 const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
 const UF_OPTIONS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
@@ -182,6 +194,7 @@ const AssociadoForm = () => {
           <div>
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">CPF *</Label>
             <Input value={form.cpf} onChange={(e) => set("cpf", e.target.value)} placeholder="000.000.000-00" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("cpf")}`} />
+            <Input value={form.cpf} onChange={(e) => set("cpf", maskCPF(e.target.value))} placeholder="000.000.000-00" inputMode="numeric" className={`mt-1.5 h-11 rounded-xl border-0 bg-muted/50 focus:bg-background ${inputErr("cpf")}`} />
             <FieldError field="cpf" />
           </div>
           <div>
