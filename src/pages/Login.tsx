@@ -23,9 +23,8 @@ const Login = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const { nome: n, senha: s } = JSON.parse(saved);
-        if (n) setNome(n);
-        if (s) setSenha(s);
+        const parsed = JSON.parse(saved);
+        if (parsed.nome) setNome(parsed.nome);
         setLembrar(true);
       } catch {}
     }

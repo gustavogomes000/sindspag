@@ -57,7 +57,11 @@ const AssociadoForm = () => {
 
   useEffect(() => {
     if (!isNew && id) {
-      supabase.from("sindspag_associados").select("*").eq("id", id).single().then(({ data }) => {
+      supabase.from("sindspag_associados").select("*").eq("id", id).single().then(({ data, error }) => {
+        if (error) {
+          toast.error("Erro ao carregar associado: " + error.message);
+          return;
+        }
         if (data) {
           setForm({
             nome: data.nome || "", cpf: data.cpf || "",
