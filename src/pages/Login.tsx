@@ -47,7 +47,7 @@ const Login = () => {
       return;
     }
     if (lembrar) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nome: trimmedNome, senha }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ nome: trimmedNome }));
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
