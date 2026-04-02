@@ -23,6 +23,18 @@ const maskPhone = (v: string) => {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 };
 
+const isValidCPF = (cpf: string): boolean => {
+  const d = cpf.replace(/\D/g, "");
+  if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false;
+  for (let t = 9; t < 11; t++) {
+    let sum = 0;
+    for (let i = 0; i < t; i++) sum += parseInt(d[i]) * (t + 1 - i);
+    const rest = (sum * 10) % 11;
+    if ((rest === 10 ? 0 : rest) !== parseInt(d[t])) return false;
+  }
+  return true;
+};
+
 
 const STATUS_OPTIONS = ["Ativo", "Inativo", "Suspenso"];
 const UF_OPTIONS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
@@ -110,7 +122,10 @@ const AssociadoForm = () => {
   const validate = (): Record<string, string> => {
     const errs: Record<string, string> = {};
     if (!form.nome.trim()) errs.nome = "Nome é obrigatório";
-    if (!form.cpf.trim()) errs.cpf = "CPF é obrigatório";
+    const cpfDigits = form.cpf.replace(/\D/g, "");
+    if (!cpfDigits) errs.cpf = "CPF é obrigatório";
+    else if (cpfDigits.length < 11) errs.cpf = "CPF incompleto";
+    else if (!isValidCPF(cpfDigits)) errs.cpf = "CPF inválido";
     if (!form.whatsapp.trim()) errs.whatsapp = "WhatsApp é obrigatório";
     if (!form.instagram.trim()) errs.instagram = "Rede Social é obrigatória";
     if (form.eh_socio_atual && !form.socio_desde) errs.socio_desde = "Informe desde quando é sócio";
