@@ -17,6 +17,11 @@ const maskCPF = (v: string) => {
 };
 
 const maskPhone = (v: string) => {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d.length ? `(${d}` : "";
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+};
 
 const isValidCPF = (cpf: string): boolean => {
   const d = cpf.replace(/\D/g, "");
@@ -28,12 +33,6 @@ const isValidCPF = (cpf: string): boolean => {
     if ((rest === 10 ? 0 : rest) !== parseInt(d[t])) return false;
   }
   return true;
-};
-
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length <= 2) return d.length ? `(${d}` : "";
-  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 };
 
 
