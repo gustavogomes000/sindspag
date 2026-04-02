@@ -118,7 +118,7 @@ const Login = () => {
                 onCheckedChange={(checked) => setLembrar(checked === true)}
               />
               <Label htmlFor="lembrar" className="text-xs sm:text-sm text-muted-foreground cursor-pointer select-none">
-                Lembrar usuário e senha
+                Lembrar meu usuário
               </Label>
             </div>
 
