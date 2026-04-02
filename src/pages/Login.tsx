@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Lock, User, MessageCircle } from "lucide-react";
-import InstallPrompt from "@/components/InstallPrompt";
+
 
 const STORAGE_KEY = "sindspag_remember";
 
@@ -52,9 +52,16 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const result = await login(trimmedNome, senha);
+      const result = await login(trimmedNome, trimmedSenha);
       if (result.success) {
+        // Use both navigate and fallback to ensure redirect always works
         navigate("/associados", { replace: true });
+        // Fallback: if navigate didn't trigger re-render, force it
+        setTimeout(() => {
+          if (window.location.pathname === "/") {
+            window.location.href = "/associados";
+          }
+        }, 300);
       } else {
         setError(result.message || "Erro ao fazer login");
       }
@@ -159,7 +166,6 @@ const Login = () => {
           Sindicato dos Servidores Públicos Municipais de Aparecida de Goiânia
         </p>
       </div>
-      <InstallPrompt />
     </div>
   );
 };
