@@ -311,7 +311,7 @@ const AssociadoForm = () => {
           </div>
         </SectionCard>
 
-        <div className="flex flex-col-reverse gap-2 pb-8 sm:flex-row sm:justify-end sm:gap-3 sm:pb-4">
+        <div className="flex flex-col-reverse gap-2 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:flex-row sm:justify-end sm:gap-3">
           <Button type="button" variant="outline" onClick={() => navigate("/associados")} className="rounded-xl h-11 px-6 w-full sm:w-auto">
             Cancelar
           </Button>
